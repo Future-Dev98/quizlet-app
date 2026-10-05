@@ -1,0 +1,2925 @@
+{
+  "version": 1,
+  "sets": [
+    {
+      "id": "1",
+      "title": "Động từ",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "1",
+          "term": "가다",
+          "definition": "đi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "2",
+          "term": "오다",
+          "definition": "đến",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "3",
+          "term": "먹다",
+          "definition": "ăn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "4",
+          "term": "마시다",
+          "definition": "uống",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "5",
+          "term": "보다",
+          "definition": "xem, nhìn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "6",
+          "term": "읽다",
+          "definition": "đọc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "7",
+          "term": "쓰다",
+          "definition": "viết",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "8",
+          "term": "듣다",
+          "definition": "nghe",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "9",
+          "term": "말하다",
+          "definition": "nói",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "10",
+          "term": "공부하다",
+          "definition": "học",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "11",
+          "term": "일하다",
+          "definition": "làm việc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "12",
+          "term": "자다",
+          "definition": "ngủ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "13",
+          "term": "일어나다",
+          "definition": "thức dậy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "14",
+          "term": "앉다",
+          "definition": "ngồi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "15",
+          "term": "서다",
+          "definition": "đứng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "16",
+          "term": "걷다",
+          "definition": "đi bộ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "17",
+          "term": "뛰다",
+          "definition": "chạy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "18",
+          "term": "만나다",
+          "definition": "gặp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "19",
+          "term": "헤어지다",
+          "definition": "chia tay",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "20",
+          "term": "사다",
+          "definition": "mua",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "21",
+          "term": "팔다",
+          "definition": "bán",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "22",
+          "term": "주다",
+          "definition": "cho",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "23",
+          "term": "받다",
+          "definition": "nhận",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "24",
+          "term": "빌리다",
+          "definition": "mượn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "25",
+          "term": "빌려주다",
+          "definition": "cho mượn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "26",
+          "term": "기다리다",
+          "definition": "chờ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "27",
+          "term": "찾다",
+          "definition": "tìm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "28",
+          "term": "잃어버리다",
+          "definition": "làm mất",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "29",
+          "term": "만들다",
+          "definition": "làm, tạo ra",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "30",
+          "term": "열다",
+          "definition": "mở",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "31",
+          "term": "닫다",
+          "definition": "đóng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "32",
+          "term": "켜다",
+          "definition": "bật",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "33",
+          "term": "끄다",
+          "definition": "tắt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "34",
+          "term": "입다",
+          "definition": "mặc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "35",
+          "term": "벗다",
+          "definition": "cởi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "36",
+          "term": "신다",
+          "definition": "mang, đi giày",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "37",
+          "term": "씻다",
+          "definition": "rửa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "38",
+          "term": "목욕하다",
+          "definition": "tắm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "39",
+          "term": "청소하다",
+          "definition": "dọn dẹp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "40",
+          "term": "요리하다",
+          "definition": "nấu ăn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "41",
+          "term": "운전하다",
+          "definition": "lái xe",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "42",
+          "term": "타다",
+          "definition": "đi, lên phương tiện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "43",
+          "term": "내리다",
+          "definition": "xuống",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "44",
+          "term": "출발하다",
+          "definition": "khởi hành",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "45",
+          "term": "도착하다",
+          "definition": "đến nơi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "46",
+          "term": "여행하다",
+          "definition": "du lịch",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "47",
+          "term": "쉬다",
+          "definition": "nghỉ ngơi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "48",
+          "term": "놀다",
+          "definition": "chơi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "49",
+          "term": "운동하다",
+          "definition": "tập thể dục",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "50",
+          "term": "수영하다",
+          "definition": "bơi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "51",
+          "term": "전화하다",
+          "definition": "gọi điện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "52",
+          "term": "문자하다",
+          "definition": "nhắn tin",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "53",
+          "term": "보내다",
+          "definition": "gửi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "54",
+          "term": "찍다",
+          "definition": "chụp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "55",
+          "term": "사용하다",
+          "definition": "sử dụng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "56",
+          "term": "배우다",
+          "definition": "học",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "57",
+          "term": "가르치다",
+          "definition": "dạy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "58",
+          "term": "연습하다",
+          "definition": "luyện tập",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "59",
+          "term": "질문하다",
+          "definition": "hỏi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "60",
+          "term": "대답하다",
+          "definition": "trả lời",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "61",
+          "term": "물어보다",
+          "definition": "hỏi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "62",
+          "term": "알다",
+          "definition": "biết",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "63",
+          "term": "모르다",
+          "definition": "không biết",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "64",
+          "term": "기억하다",
+          "definition": "nhớ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "65",
+          "term": "잊다",
+          "definition": "quên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "66",
+          "term": "생각하다",
+          "definition": "suy nghĩ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "67",
+          "term": "이해하다",
+          "definition": "hiểu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "68",
+          "term": "선택하다",
+          "definition": "lựa chọn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "69",
+          "term": "결정하다",
+          "definition": "quyết định",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "70",
+          "term": "준비하다",
+          "definition": "chuẩn bị",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "71",
+          "term": "시작하다",
+          "definition": "bắt đầu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "72",
+          "term": "끝나다",
+          "definition": "kết thúc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "73",
+          "term": "끝내다",
+          "definition": "kết thúc việc gì",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "74",
+          "term": "도와주다",
+          "definition": "giúp đỡ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "75",
+          "term": "좋아하다",
+          "definition": "thích",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "76",
+          "term": "사랑하다",
+          "definition": "yêu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "77",
+          "term": "싫어하다",
+          "definition": "ghét",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "78",
+          "term": "원하다",
+          "definition": "muốn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "79",
+          "term": "필요하다",
+          "definition": "cần",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "80",
+          "term": "약속하다",
+          "definition": "hứa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "81",
+          "term": "예약하다",
+          "definition": "đặt trước",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "82",
+          "term": "주문하다",
+          "definition": "gọi món, đặt hàng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "83",
+          "term": "계산하다",
+          "definition": "thanh toán",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Tính từ",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "84",
+          "term": "좋다",
+          "definition": "tốt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "85",
+          "term": "나쁘다",
+          "definition": "xấu, không tốt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "86",
+          "term": "크다",
+          "definition": "to, lớn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "87",
+          "term": "작다",
+          "definition": "nhỏ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "88",
+          "term": "많다",
+          "definition": "nhiều",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "89",
+          "term": "적다",
+          "definition": "ít",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "90",
+          "term": "길다",
+          "definition": "dài",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "91",
+          "term": "짧다",
+          "definition": "ngắn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "92",
+          "term": "높다",
+          "definition": "cao",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "93",
+          "term": "낮다",
+          "definition": "thấp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "94",
+          "term": "빠르다",
+          "definition": "nhanh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "95",
+          "term": "느리다",
+          "definition": "chậm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "96",
+          "term": "쉽다",
+          "definition": "dễ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "97",
+          "term": "어렵다",
+          "definition": "khó",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "98",
+          "term": "비싸다",
+          "definition": "đắt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "99",
+          "term": "싸다",
+          "definition": "rẻ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "100",
+          "term": "덥다",
+          "definition": "nóng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "101",
+          "term": "춥다",
+          "definition": "lạnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "102",
+          "term": "따뜻하다",
+          "definition": "ấm áp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "103",
+          "term": "시원하다",
+          "definition": "mát mẻ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "104",
+          "term": "뜨겁다",
+          "definition": "nóng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "105",
+          "term": "차갑다",
+          "definition": "lạnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "106",
+          "term": "맛있다",
+          "definition": "ngon",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "107",
+          "term": "맛없다",
+          "definition": "không ngon",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "108",
+          "term": "예쁘다",
+          "definition": "đẹp, xinh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "109",
+          "term": "아름답다",
+          "definition": "đẹp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "110",
+          "term": "잘생기다",
+          "definition": "đẹp trai",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "111",
+          "term": "귀엽다",
+          "definition": "dễ thương",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "112",
+          "term": "멋있다",
+          "definition": "ngầu, đẹp, phong độ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "113",
+          "term": "재미있다",
+          "definition": "thú vị, vui",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "114",
+          "term": "재미없다",
+          "definition": "không thú vị, chán",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "115",
+          "term": "바쁘다",
+          "definition": "bận",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "116",
+          "term": "한가하다",
+          "definition": "rảnh rỗi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "117",
+          "term": "피곤하다",
+          "definition": "mệt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "118",
+          "term": "건강하다",
+          "definition": "khỏe mạnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "119",
+          "term": "아프다",
+          "definition": "đau, ốm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "120",
+          "term": "행복하다",
+          "definition": "hạnh phúc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "121",
+          "term": "슬프다",
+          "definition": "buồn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "122",
+          "term": "기쁘다",
+          "definition": "vui, vui mừng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "123",
+          "term": "무섭다",
+          "definition": "đáng sợ, sợ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "124",
+          "term": "외롭다",
+          "definition": "cô đơn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "125",
+          "term": "친절하다",
+          "definition": "thân thiện, tử tế",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "126",
+          "term": "착하다",
+          "definition": "tốt bụng, hiền",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "127",
+          "term": "똑똑하다",
+          "definition": "thông minh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "128",
+          "term": "성실하다",
+          "definition": "chăm chỉ, nghiêm túc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "129",
+          "term": "부지런하다",
+          "definition": "siêng năng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "130",
+          "term": "게으르다",
+          "definition": "lười biếng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "131",
+          "term": "조용하다",
+          "definition": "yên tĩnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "132",
+          "term": "깨끗하다",
+          "definition": "sạch sẽ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "133",
+          "term": "더럽다",
+          "definition": "bẩn",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "Địa điểm",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "134",
+          "term": "집",
+          "definition": "nhà",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "135",
+          "term": "학교",
+          "definition": "trường học",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "136",
+          "term": "회사",
+          "definition": "công ty",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "137",
+          "term": "사무실",
+          "definition": "văn phòng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "138",
+          "term": "은행",
+          "definition": "ngân hàng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "139",
+          "term": "병원",
+          "definition": "bệnh viện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "140",
+          "term": "약국",
+          "definition": "nhà thuốc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "141",
+          "term": "우체국",
+          "definition": "bưu điện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "142",
+          "term": "경찰서",
+          "definition": "đồn cảnh sát",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "143",
+          "term": "도서관",
+          "definition": "thư viện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "144",
+          "term": "식당",
+          "definition": "nhà hàng, quán ăn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "145",
+          "term": "카페",
+          "definition": "quán cà phê",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "146",
+          "term": "빵집",
+          "definition": "tiệm bánh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "147",
+          "term": "마트",
+          "definition": "siêu thị",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "148",
+          "term": "시장",
+          "definition": "chợ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "149",
+          "term": "백화점",
+          "definition": "trung tâm bách hóa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "150",
+          "term": "편의점",
+          "definition": "cửa hàng tiện lợi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "151",
+          "term": "옷가게",
+          "definition": "cửa hàng quần áo",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "152",
+          "term": "서점",
+          "definition": "hiệu sách",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "153",
+          "term": "미용실",
+          "definition": "tiệm làm tóc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "154",
+          "term": "공원",
+          "definition": "công viên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "155",
+          "term": "영화관",
+          "definition": "rạp chiếu phim",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "156",
+          "term": "극장",
+          "definition": "nhà hát, rạp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "157",
+          "term": "노래방",
+          "definition": "phòng karaoke",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "158",
+          "term": "수영장",
+          "definition": "hồ bơi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "159",
+          "term": "운동장",
+          "definition": "sân vận động, sân tập",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "160",
+          "term": "헬스장",
+          "definition": "phòng gym",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "161",
+          "term": "호텔",
+          "definition": "khách sạn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "162",
+          "term": "공항",
+          "definition": "sân bay",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "163",
+          "term": "역",
+          "definition": "nhà ga",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "164",
+          "term": "기차역",
+          "definition": "ga tàu hỏa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "165",
+          "term": "지하철역",
+          "definition": "ga tàu điện ngầm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "166",
+          "term": "버스 정류장",
+          "definition": "trạm xe buýt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "167",
+          "term": "주차장",
+          "definition": "bãi đỗ xe",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "168",
+          "term": "화장실",
+          "definition": "nhà vệ sinh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "169",
+          "term": "교실",
+          "definition": "phòng học",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "170",
+          "term": "기숙사",
+          "definition": "ký túc xá",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "171",
+          "term": "공장",
+          "definition": "nhà máy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "172",
+          "term": "회의실",
+          "definition": "phòng họp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "173",
+          "term": "주방",
+          "definition": "nhà bếp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "174",
+          "term": "방",
+          "definition": "phòng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "175",
+          "term": "거실",
+          "definition": "phòng khách",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "176",
+          "term": "산",
+          "definition": "núi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "177",
+          "term": "바다",
+          "definition": "biển",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "178",
+          "term": "강",
+          "definition": "sông",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "179",
+          "term": "해변",
+          "definition": "bãi biển",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "180",
+          "term": "섬",
+          "definition": "đảo",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "181",
+          "term": "박물관",
+          "definition": "bảo tàng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "182",
+          "term": "미술관",
+          "definition": "bảo tàng nghệ thuật",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "183",
+          "term": "놀이공원",
+          "definition": "công viên giải trí",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "title": "Y tế  - Sức khỏe",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "184",
+          "term": "병원",
+          "definition": "bệnh viện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "185",
+          "term": "약국",
+          "definition": "nhà thuốc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "186",
+          "term": "의사",
+          "definition": "bác sĩ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "187",
+          "term": "간호사",
+          "definition": "y tá, điều dưỡng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "188",
+          "term": "환자",
+          "definition": "bệnh nhân",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "189",
+          "term": "약",
+          "definition": "thuốc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "190",
+          "term": "감기",
+          "definition": "cảm cúm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "191",
+          "term": "독감",
+          "definition": "cúm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "192",
+          "term": "기침",
+          "definition": "ho",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "193",
+          "term": "콧물",
+          "definition": "sổ mũi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "194",
+          "term": "열",
+          "definition": "sốt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "195",
+          "term": "두통",
+          "definition": "đau đầu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "196",
+          "term": "복통",
+          "definition": "đau bụng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "197",
+          "term": "치통",
+          "definition": "đau răng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "198",
+          "term": "상처",
+          "definition": "vết thương",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "199",
+          "term": "피",
+          "definition": "máu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "200",
+          "term": "주사",
+          "definition": "mũi tiêm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "201",
+          "term": "수술",
+          "definition": "phẫu thuật",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "202",
+          "term": "검사",
+          "definition": "kiểm tra, xét nghiệm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "203",
+          "term": "치료",
+          "definition": "điều trị",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "204",
+          "term": "처방전",
+          "definition": "đơn thuốc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "205",
+          "term": "응급실",
+          "definition": "phòng cấp cứu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "206",
+          "term": "체온",
+          "definition": "nhiệt độ cơ thể",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "207",
+          "term": "혈압",
+          "definition": "huyết áp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "208",
+          "term": "건강",
+          "definition": "sức khỏe",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "209",
+          "term": "병",
+          "definition": "bệnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "210",
+          "term": "증상",
+          "definition": "triệu chứng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "211",
+          "term": "알레르기",
+          "definition": "dị ứng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "212",
+          "term": "소화불량",
+          "definition": "khó tiêu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "213",
+          "term": "배탈",
+          "definition": "đau/rối loạn bụng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "214",
+          "term": "설사",
+          "definition": "tiêu chảy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "215",
+          "term": "변비",
+          "definition": "táo bón",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "216",
+          "term": "구토",
+          "definition": "nôn ói",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "217",
+          "term": "어지럽다",
+          "definition": "chóng mặt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "218",
+          "term": "아프다",
+          "definition": "đau, ốm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "219",
+          "term": "붓다",
+          "definition": "sưng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "220",
+          "term": "다치다",
+          "definition": "bị thương",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "221",
+          "term": "낫다",
+          "definition": "khỏi bệnh, đỡ bệnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "222",
+          "term": "기침하다",
+          "definition": "ho",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "223",
+          "term": "토하다",
+          "definition": "nôn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "224",
+          "term": "진찰하다",
+          "definition": "khám bệnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "225",
+          "term": "치료하다",
+          "definition": "điều trị",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "226",
+          "term": "입원하다",
+          "definition": "nhập viện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "227",
+          "term": "퇴원하다",
+          "definition": "xuất viện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "228",
+          "term": "약을 먹다",
+          "definition": "uống thuốc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "229",
+          "term": "주사를 맞다",
+          "definition": "tiêm, được tiêm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "230",
+          "term": "감기에 걸리다",
+          "definition": "bị cảm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "231",
+          "term": "열이 나다",
+          "definition": "bị sốt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "232",
+          "term": "배가 아프다",
+          "definition": "đau bụng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "233",
+          "term": "머리가 아프다",
+          "definition": "đau đầu",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "title": "Phương hướng",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "234",
+          "term": "앞",
+          "definition": "phía trước",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "235",
+          "term": "뒤",
+          "definition": "phía sau",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "236",
+          "term": "위",
+          "definition": "phía trên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "237",
+          "term": "아래",
+          "definition": "phía dưới",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "238",
+          "term": "옆",
+          "definition": "bên cạnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "239",
+          "term": "왼쪽",
+          "definition": "bên trái",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "240",
+          "term": "오른쪽",
+          "definition": "bên phải",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "241",
+          "term": "안",
+          "definition": "bên trong",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "242",
+          "term": "밖",
+          "definition": "bên ngoài",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "243",
+          "term": "가운데",
+          "definition": "ở giữa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "244",
+          "term": "중간",
+          "definition": "ở giữa, trung gian",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "245",
+          "term": "근처",
+          "definition": "gần, khu vực gần",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "246",
+          "term": "맞은편",
+          "definition": "đối diện",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "247",
+          "term": "건너편",
+          "definition": "phía đối diện, bên kia",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "248",
+          "term": "사이",
+          "definition": "ở giữa hai vật/người",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "249",
+          "term": "동쪽",
+          "definition": "phía đông",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "250",
+          "term": "서쪽",
+          "definition": "phía tây",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "251",
+          "term": "남쪽",
+          "definition": "phía nam",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "252",
+          "term": "북쪽",
+          "definition": "phía bắc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "253",
+          "term": "직진",
+          "definition": "đi thẳng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "254",
+          "term": "왼쪽으로",
+          "definition": "về phía trái",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "255",
+          "term": "오른쪽으로",
+          "definition": "về phía phải",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "256",
+          "term": "앞으로",
+          "definition": "về phía trước",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "257",
+          "term": "뒤로",
+          "definition": "về phía sau",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "258",
+          "term": "위로",
+          "definition": "lên phía trên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "259",
+          "term": "아래로",
+          "definition": "xuống phía dưới",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "260",
+          "term": "이쪽",
+          "definition": "phía này",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "261",
+          "term": "그쪽",
+          "definition": "phía đó",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "262",
+          "term": "저쪽",
+          "definition": "phía kia",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "263",
+          "term": "어디",
+          "definition": "ở đâu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "264",
+          "term": "여기",
+          "definition": "ở đây",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "265",
+          "term": "거기",
+          "definition": "ở đó",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "266",
+          "term": "저기",
+          "definition": "ở đằng kia",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "267",
+          "term": "길",
+          "definition": "đường",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "268",
+          "term": "사거리",
+          "definition": "ngã tư",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "269",
+          "term": "삼거리",
+          "definition": "ngã ba",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "270",
+          "term": "횡단보도",
+          "definition": "vạch qua đường",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "271",
+          "term": "신호등",
+          "definition": "đèn giao thông",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "272",
+          "term": "교차로",
+          "definition": "giao lộ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "273",
+          "term": "모퉁이",
+          "definition": "góc đường",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "274",
+          "term": "돌다",
+          "definition": "rẽ, quay",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "275",
+          "term": "건너다",
+          "definition": "băng qua",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "276",
+          "term": "올라가다",
+          "definition": "đi lên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "277",
+          "term": "내려가다",
+          "definition": "đi xuống",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "278",
+          "term": "들어가다",
+          "definition": "đi vào",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "279",
+          "term": "나가다",
+          "definition": "đi ra",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "280",
+          "term": "지나가다",
+          "definition": "đi qua",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "281",
+          "term": "가깝다",
+          "definition": "gần",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "282",
+          "term": "멀다",
+          "definition": "xa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "283",
+          "term": "찾다",
+          "definition": "tìm kiếm",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "title": "Thời gian",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "284",
+          "term": "오늘",
+          "definition": "hôm nay",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "285",
+          "term": "어제",
+          "definition": "hôm qua",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "286",
+          "term": "내일",
+          "definition": "ngày mai",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "287",
+          "term": "모레",
+          "definition": "ngày kia",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "288",
+          "term": "그저께",
+          "definition": "hôm kia",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "289",
+          "term": "지금",
+          "definition": "bây giờ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "290",
+          "term": "아까",
+          "definition": "lúc nãy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "291",
+          "term": "나중에",
+          "definition": "sau này, lát nữa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "292",
+          "term": "곧",
+          "definition": "sắp, sắp tới",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "293",
+          "term": "먼저",
+          "definition": "trước, trước tiên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "294",
+          "term": "언제",
+          "definition": "khi nào",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "295",
+          "term": "항상",
+          "definition": "luôn luôn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "296",
+          "term": "자주",
+          "definition": "thường xuyên",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "297",
+          "term": "가끔",
+          "definition": "thỉnh thoảng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "298",
+          "term": "보통",
+          "definition": "thường, thông thường",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "299",
+          "term": "매일",
+          "definition": "mỗi ngày",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "300",
+          "term": "매주",
+          "definition": "mỗi tuần",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "301",
+          "term": "매달",
+          "definition": "mỗi tháng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "302",
+          "term": "매년",
+          "definition": "mỗi năm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "303",
+          "term": "아침",
+          "definition": "buổi sáng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "304",
+          "term": "점심",
+          "definition": "buổi trưa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "305",
+          "term": "오후",
+          "definition": "buổi chiều",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "306",
+          "term": "저녁",
+          "definition": "buổi tối",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "307",
+          "term": "밤",
+          "definition": "ban đêm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "308",
+          "term": "새벽",
+          "definition": "sáng sớm, rạng sáng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "309",
+          "term": "낮",
+          "definition": "ban ngày",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "310",
+          "term": "시간",
+          "definition": "thời gian, giờ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "311",
+          "term": "분",
+          "definition": "phút",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "312",
+          "term": "초",
+          "definition": "giây",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "313",
+          "term": "시",
+          "definition": "giờ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "314",
+          "term": "하루",
+          "definition": "một ngày",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "315",
+          "term": "주",
+          "definition": "tuần",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "316",
+          "term": "이번 주",
+          "definition": "tuần này",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "317",
+          "term": "지난주",
+          "definition": "tuần trước",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "318",
+          "term": "다음 주",
+          "definition": "tuần sau",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "319",
+          "term": "이번 달",
+          "definition": "tháng này",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "320",
+          "term": "지난달",
+          "definition": "tháng trước",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "321",
+          "term": "다음 달",
+          "definition": "tháng sau",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "322",
+          "term": "올해",
+          "definition": "năm nay",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "323",
+          "term": "작년",
+          "definition": "năm ngoái",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "324",
+          "term": "내년",
+          "definition": "năm sau",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "325",
+          "term": "봄",
+          "definition": "mùa xuân",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "326",
+          "term": "여름",
+          "definition": "mùa hè",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "327",
+          "term": "가을",
+          "definition": "mùa thu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "328",
+          "term": "겨울",
+          "definition": "mùa đông",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "329",
+          "term": "평일",
+          "definition": "ngày thường",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "330",
+          "term": "주말",
+          "definition": "cuối tuần",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "331",
+          "term": "월요일",
+          "definition": "thứ Hai",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "332",
+          "term": "화요일",
+          "definition": "thứ Ba",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "333",
+          "term": "수요일",
+          "definition": "thứ Tư",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "334",
+          "term": "목요일",
+          "definition": "thứ Năm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "335",
+          "term": "금요일",
+          "definition": "thứ Sáu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "336",
+          "term": "토요일",
+          "definition": "thứ Bảy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "337",
+          "term": "일요일",
+          "definition": "Chủ nhật",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "title": "Số thuần hàn",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "338",
+          "term": "하나",
+          "definition": "một",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "339",
+          "term": "둘",
+          "definition": "hai",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "340",
+          "term": "셋",
+          "definition": "ba",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "341",
+          "term": "넷",
+          "definition": "bốn",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "342",
+          "term": "다섯",
+          "definition": "năm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "343",
+          "term": "여섯",
+          "definition": "sáu",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "344",
+          "term": "일곱",
+          "definition": "bảy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "345",
+          "term": "여덟",
+          "definition": "tám",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "346",
+          "term": "아홉",
+          "definition": "chín",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "347",
+          "term": "열",
+          "definition": "mười",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "357",
+          "term": "스물",
+          "definition": "hai mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "358",
+          "term": "서른",
+          "definition": "ba mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "359",
+          "term": "마흔",
+          "definition": "bốn mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "360",
+          "term": "쉰",
+          "definition": "năm mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "361",
+          "term": "예순",
+          "definition": "sáu mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "362",
+          "term": "일흔",
+          "definition": "bảy mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "363",
+          "term": "여든",
+          "definition": "tám mươi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "364",
+          "term": "아흔",
+          "definition": "chín mươi",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "title": "Đồ vật",
+      "description": "",
+      "folderId": null,
+      "sortOrder": 0,
+      "subject": "Tiếng Hàn",
+      "cards": [
+        {
+          "id": "365",
+          "term": "가방",
+          "definition": "Túi xách, cặp sách",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "366",
+          "term": "책",
+          "definition": "Sách",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "367",
+          "term": "공책",
+          "definition": "Vở ghi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "368",
+          "term": "연필",
+          "definition": "Bút chibi/Bút chì",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "369",
+          "term": "볼펜",
+          "definition": "Bút bi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "370",
+          "term": "지우개",
+          "definition": "Cục tẩy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "371",
+          "term": "안경",
+          "definition": "Kính mắt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "372",
+          "term": "시계",
+          "definition": "Đồng hồ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "373",
+          "term": "모자",
+          "definition": "Mũ, nón",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "374",
+          "term": "옷",
+          "definition": "Quần áo",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "375",
+          "term": "신발",
+          "definition": "Giày dép",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "376",
+          "term": "우산",
+          "definition": "Cây ô, dù",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "377",
+          "term": "열쇠",
+          "definition": "Chìa khóa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "378",
+          "term": "지갑",
+          "definition": "Ví tiền",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "379",
+          "term": "휴대폰",
+          "definition": "Điện thoại di động",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "380",
+          "term": "컴퓨터",
+          "definition": "Máy tính",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "381",
+          "term": "노트북",
+          "definition": "Máy tính xách tay (Laptop)",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "382",
+          "term": "수건",
+          "definition": "Khăn tắm, khăn mặt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "383",
+          "term": "거울",
+          "definition": "Gương",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "384",
+          "term": "빗",
+          "definition": "Cái lược",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "385",
+          "term": "의자",
+          "definition": "Cái ghế",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "386",
+          "term": "책상",
+          "definition": "Bàn học, bàn làm việc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "387",
+          "term": "침대",
+          "definition": "Giường ngủ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "388",
+          "term": "문",
+          "definition": "Cửa ra vào",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "389",
+          "term": "창문",
+          "definition": "Cửa sổ",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "390",
+          "term": "냉장고",
+          "definition": "Tủ lạnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "391",
+          "term": "세탁기",
+          "definition": "Máy giặt",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "392",
+          "term": "에어컨",
+          "definition": "Máy điều hòa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "393",
+          "term": "TV",
+          "definition": "Tivi",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "394",
+          "term": "선풍기",
+          "definition": "Quạt máy",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "395",
+          "term": "컵",
+          "definition": "Cái cốc, ly",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "396",
+          "term": "접시",
+          "definition": "Cái đĩa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "397",
+          "term": "젓가락",
+          "definition": "Đôi đũa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "398",
+          "term": "숟가락",
+          "definition": "Cái thìa, muỗng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "399",
+          "term": "칼",
+          "definition": "Con dao",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "400",
+          "term": "휴지",
+          "definition": "Giấy ăn, giấy vệ sinh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "401",
+          "term": "약",
+          "definition": "Thuốc",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "402",
+          "term": "비누",
+          "definition": "Xà phòng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "403",
+          "term": "치약",
+          "definition": "Kem đánh răng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "404",
+          "term": "칫솔",
+          "definition": "Bàn chải đánh răng",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "405",
+          "term": "열차",
+          "definition": "Tàu hỏa",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "406",
+          "term": "자전거",
+          "definition": "Xe đạp",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "407",
+          "term": "차",
+          "definition": "Xe ô tô",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "408",
+          "term": "카메라",
+          "definition": "Máy ảnh",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "409",
+          "term": "선물",
+          "definition": "Món quà",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "410",
+          "term": "돈",
+          "definition": "Tiền",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "411",
+          "term": "가위",
+          "definition": "Cái kéo",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "412",
+          "term": "인형",
+          "definition": "Gấu bông, búp bê",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "413",
+          "term": "화장품",
+          "definition": "Mỹ phẩm",
+          "starred": false,
+          "mastered": false
+        },
+        {
+          "id": "414",
+          "term": "자물쇠",
+          "definition": "Ổ khóa",
+          "starred": false,
+          "mastered": false
+        }
+      ]
+    }
+  ],
+  "folders": [],
+  "sessions": 0,
+  "correct": 0,
+  "answers": 0,
+  "darkMode": false
+}
