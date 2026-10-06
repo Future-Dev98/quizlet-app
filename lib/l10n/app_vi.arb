@@ -1,0 +1,439 @@
+{
+  "@@locale": "vi",
+  "addWord": "Thêm từ",
+  "saveWord": "Lưu từ",
+  "autoDetailsHint": "Cách dùng, ví dụ và từ đồng nghĩa sẽ được tra tự động khi lưu.",
+  "wordActions": "Thao tác với từ",
+  "wordListHint": "Chạm vào từ để xem chi tiết · Kéo biểu tượng bên trái để sắp xếp",
+  "reorderWord": "Kéo để sắp xếp từ",
+  "clearSearch": "Xóa tìm kiếm",
+  "cardDetails": "Chi tiết thẻ",
+  "wordUsage": "Cách sử dụng",
+  "usageExamples": "Ví dụ sử dụng",
+  "wordSynonyms": "Từ đồng nghĩa",
+  "dictionaryMeanings": "Nghĩa và từ loại từ từ điển",
+  "noDictionaryMeanings": "Từ điển chưa có thông tin nghĩa.",
+  "noUsageNotes": "Từ điển chưa có ghi chú cách dùng. Tham khảo nghĩa, từ loại và ví dụ bên dưới.",
+  "noUsageExamples": "Từ điển chưa có ví dụ cho từ này.",
+  "noSynonyms": "Từ điển chưa liệt kê từ đồng nghĩa cho từ này.",
+  "noSavedDetails": "Thẻ này chưa có dữ liệu chi tiết. Chọn Tra chi tiết để tìm và lưu.",
+  "lookupDetails": "Tra chi tiết",
+  "refreshDetails": "Tra lại và lưu",
+  "closeDetails": "Đóng",
+  "noDictionaryEntry": "Chưa tìm thấy mục từ cho ngôn ngữ đã chọn. Kiểm tra chính tả và Ngôn ngữ của từ trong Tùy chọn thẻ.",
+  "dictionaryLookupError": "Chưa tra được từ điển. Kiểm tra kết nối mạng rồi thử lại. Dữ liệu đã lưu được giữ nguyên.",
+  "dictionarySourceNotice": "Nguồn: Wiktionary · CC BY-SA. Giữ nguyên ngôn ngữ nguồn; một từ có thể có nhiều nghĩa và cách dùng.",
+  "copySource": "Sao chép nguồn",
+  "sourceCopied": "Đã sao chép liên kết nguồn.",
+  "wordSuggestions": "Gợi ý từ · Chạm để xem chi tiết",
+  "lookingUpWords": "Đang tra cách dùng và từ đồng nghĩa",
+  "dictionaryNetworkNotice": "Tra từ trên Wiktionary theo Ngôn ngữ của từ. Chỉ gửi từ cần tra; kết quả được lưu cùng thẻ để xem offline.",
+  "skipLookup": "Bỏ qua tra cứu và lưu từ",
+  "detailsMissing": "Đã lưu từ. {count} thẻ chưa có chi tiết từ điển; có thể tra lại từ popup.",
+  "@detailsMissing": {"placeholders": {"count": {"type": "int"}}},
+  "appTitle": "Từ Vựng",
+  "brand": "từ vựng",
+  "saveError": "Chưa lưu được dữ liệu. Kiểm tra dung lượng máy và thử lại.",
+  "loadError": "Không đọc được dữ liệu. Dữ liệu hiện có được giữ lại.",
+  "retry": "Thử lại",
+  "home": "Trang chủ",
+  "library": "Thư viện",
+  "profile": "Cá nhân",
+  "createSet": "Tạo danh mục",
+  "homeHeading": "Mỗi từ mới là một\nbước tiến nhỏ.",
+  "yourLibrary": "Thư viện của bạn",
+  "tagline": "Học theo nhịp của bạn. Ghi nhớ mỗi ngày.",
+  "journey": "HÀNH TRÌNH CỦA BẠN",
+  "continueLearning": "Tiếp tục học   →",
+  "searchSets": "Tìm danh mục, từ vựng…",
+  "parentFolder": "Thư mục cha",
+  "createFolder": "Tạo thư mục",
+  "openFolder": "Mở thư mục",
+  "editFolder": "Sửa thư mục",
+  "emptyLibrary": "Chưa có danh mục phù hợp. Tạo danh mục để bắt đầu.",
+  "folderName": "Tên thư mục",
+  "rootLibrary": "Thư viện gốc",
+  "deleteEmptyFolder": "Xóa thư mục trống",
+  "cancel": "Hủy",
+  "save": "Lưu",
+  "folderNotEmpty": "Chỉ xóa được thư mục trống. Hãy chuyển nội dung ra trước.",
+  "studyCorner": "Góc học tập",
+  "yourJourney": "Kiến thức của bạn, hành trình của bạn.",
+  "themeSettings": "Cài đặt · Giao diện",
+  "themeHint": "Chọn màu nền và chữ cho ứng dụng.",
+  "lightTheme": "Sáng",
+  "darkTheme": "Tối",
+  "smallStep": "Mỗi từ mới là một bước tiến nhỏ.",
+  "darkPreview": "Nền tối · Chữ sáng",
+  "lightPreview": "Nền sáng · Chữ tối",
+  "copyBackup": "Sao chép bản sao lưu",
+  "backupHint": "Bộ từ, thư mục, cài đặt và tiến độ (JSON)",
+  "backupCopied": "Đã sao chép bản sao lưu. Bản ghi âm được lưu riêng trên máy.",
+  "restoreJson": "Khôi phục từ JSON",
+  "privacyNotice": "Dữ liệu lưu riêng trên thiết bị, không cần tài khoản. Gỡ app có thể xóa dữ liệu; hãy sao lưu trước khi đổi máy. Chấm phát âm cần máy chủ Azure và kết nối mạng.",
+  "restoreData": "Khôi phục dữ liệu",
+  "pasteBackup": "Dán JSON đã sao lưu…",
+  "check": "Kiểm tra",
+  "replaceData": "Thay thế dữ liệu hiện tại?",
+  "invalidJson": "JSON không hợp lệ. Dữ liệu hiện tại được giữ nguyên.",
+  "agree": "Đồng ý",
+  "editSet": "Sửa danh mục",
+  "setName": "Tên danh mục",
+  "enterSetName": "Nhập tên danh mục",
+  "description": "Mô tả",
+  "folder": "Thư mục",
+  "displayOrder": "Thứ tự hiển thị",
+  "orderValidation": "Nhập số từ 0 đến 1000000",
+  "saveSet": "Lưu danh mục",
+  "noImportWords": "Chưa có từ để nhập.",
+  "quiz": "Kiểm tra",
+  "reflex": "Phản xạ",
+  "writing": "Luyện viết",
+  "positiveCount": "Nhập số câu lớn hơn 0.",
+  "addBeforePractice": "Thêm từ vựng trước khi luyện tập.",
+  "distinctMeanings": "Cần ít nhất 2 nghĩa khác nhau để tạo đáp án.",
+  "writingHeading": "Nhìn nghĩa, viết lại từ.",
+  "reflexHeading": "Nhanh tay chọn đáp án.",
+  "quizHeading": "Sẵn sàng thử sức?",
+  "writingHint": "Viết từ tương ứng. Bạn có thể hiện đáp án để tự ôn tập.",
+  "quizHint": "Câu hỏi được trộn ngẫu nhiên. Đáp án sai lấy từ các từ trong danh mục.",
+  "questionCount": "Số câu hỏi",
+  "threeSeconds": "3 giây",
+  "fiveSeconds": "5 giây",
+  "start": "Bắt đầu",
+  "practiceProgress": "Mỗi lượt học là một bước tiến.",
+  "savingResult": "Đang lưu kết quả…",
+  "resultSaved": "Đã lưu kết quả trên thiết bị.",
+  "resultSaveError": "Chưa lưu được kết quả. Hãy thử lại.",
+  "backToSet": "Quay lại danh mục",
+  "retrySave": "Thử lưu lại",
+  "skipped": "Bỏ qua / hết giờ",
+  "writeMatchingWord": "Viết từ tương ứng với nghĩa",
+  "chooseMeaning": "Chọn nghĩa đúng",
+  "practicePaused": "Bài luyện đã tạm dừng khi rời ứng dụng.",
+  "resume": "Tiếp tục",
+  "typeWord": "Gõ từ…",
+  "showAnswer": "Hiện đáp án",
+  "previousQuestion": "Câu trước",
+  "nextQuestion": "Câu tiếp",
+  "correctAnswer": "Chính xác!",
+  "viewResult": "Xem kết quả",
+  "next": "Tiếp theo",
+  "speechError": "Không phát được giọng đọc trên thiết bị này.",
+  "defaultVoice": "Giọng mặc định",
+  "secondsUnit": "giây",
+  "delayHint": "0.5 giây = 500 ms · Từ 0.001 đến 60 giây",
+  "delayValidation": "Nhập thời gian từ 0.001 đến 60 giây",
+  "cardOptions": "Tùy chọn thẻ",
+  "starredOnly": "Chỉ thẻ cần học lại",
+  "trackProgress": "Theo dõi tiến độ xem thẻ",
+  "reverseCards": "Hiển thị nghĩa ở mặt trước",
+  "speechEnabled": "Bật giọng đọc",
+  "autoSpeak": "Tự đọc khi chuyển thẻ",
+  "loopCards": "Lặp lại khi hết thẻ",
+  "speakFront": "Đọc mặt trước khi tự phát",
+  "speakBack": "Đọc mặt sau khi tự phát",
+  "speechRate": "Tốc độ đọc",
+  "flipDelay": "Chờ lật thẻ",
+  "nextDelay": "Chờ chuyển thẻ",
+  "frontRepeats": "Số lần đọc mặt trước",
+  "backRepeats": "Số lần đọc mặt sau",
+  "wordVoice": "Giọng đọc từ",
+  "meaningVoice": "Giọng đọc nghĩa",
+  "font": "Kiểu chữ",
+  "defaultFont": "Mặc định",
+  "saveOptions": "Lưu tùy chọn",
+  "addDefinitions": "Thêm định nghĩa",
+  "importHint": "Mỗi dòng: từ + TAB / nhiều dấu cách / dấu phẩy + nghĩa. Từ trùng sẽ được bỏ qua.",
+  "importExample": "사랑하다, yêu\n공부하다, học",
+  "importWords": "Nhập từ",
+  "editWord": "Sửa từ vựng",
+  "word": "Từ",
+  "meaning": "Nghĩa",
+  "enterWordMeaning": "Nhập đầy đủ từ và nghĩa",
+  "duplicateWord": "Từ này đã có trong danh mục",
+  "deleteSetConfirm": "Xóa danh mục?",
+  "deleteSet": "Xóa danh mục",
+  "noCards": "Chưa có thẻ phù hợp.",
+  "markUnlearned": "Đánh dấu chưa thuộc",
+  "markLearned": "Đã thuộc từ này",
+  "practice": "Luyện tập",
+  "reading": "Luyện đọc",
+  "pronunciation": "Chấm phát âm",
+  "vocabulary": "Từ vựng",
+  "searchInSet": "Tìm trong danh mục",
+  "learned": "Đã thuộc",
+  "needsReview": "Cần học lại",
+  "listenWord": "Nghe từ",
+  "editWordAction": "Sửa từ",
+  "deleteWord": "Xóa từ",
+  "deleteWordConfirm": "Xóa từ?",
+  "recentResults": "Kết quả gần đây",
+  "meaningFace": "NGHĨA",
+  "wordFace": "TỪ",
+  "listenSample": "Nghe mẫu",
+  "cardGestureHint": "Chạm để lật · Vuốt để chuyển",
+  "recordingsLoadError": "Không đọc được bản ghi trên máy. Dữ liệu hiện có được giữ lại.",
+  "draftSaveError": "Không lưu được bài đọc nháp.",
+  "microphonePermission": "Chưa có quyền micro. Bật quyền micro cho Từ Vựng trong cài đặt thiết bị.",
+  "microphoneError": "Không khởi động được micro. Hãy kiểm tra quyền và thử lại.",
+  "emptyRecording": "Bản ghi trống. Hãy thử lại.",
+  "untitledReading": "Bài đọc không tên",
+  "recordingSaveError": "Chưa lưu hoặc chấm được bản ghi. Hãy thử lại.",
+  "endpointValidation": "Nhập URL HTTPS máy chủ dự án, ví dụ https://your-domain/api/pronunciation. Khóa Azure chỉ đặt trên máy chủ.",
+  "koreanAssessmentOnly": "Chấm phát âm cần từ tiếng Hàn.",
+  "recordOneSecond": "Hãy đọc ít nhất một giây.",
+  "assessmentError": "Máy chủ chưa chấm được phát âm.",
+  "connectionError": "Không kết nối được máy chủ.",
+  "recordingPlayError": "Không phát được bản ghi trên thiết bị.",
+  "assessmentNotice": "Chấm điểm qua Azure như dự án gốc. Âm thanh sẽ gửi đến máy chủ bạn cấu hình; dữ liệu từ vựng vẫn nằm trên thiết bị.",
+  "recordingNotice": "Bài đọc và bản ghi âm lưu trên thiết bị này. Giữ 5 bản ghi gần nhất, mỗi bản ghi tối đa 5 phút.",
+  "assessmentUrl": "URL HTTPS chấm phát âm",
+  "readingTitle": "Tên bài đọc",
+  "readingText": "Nội dung bài đọc",
+  "processing": "Đang xử lý…",
+  "stopAssess": "Dừng và chấm",
+  "stopSave": "Dừng và lưu",
+  "startRecording": "Bắt đầu ghi âm",
+  "replayRecording": "Nghe lại bản ghi",
+  "reassessRecording": "Chấm lại bản ghi",
+  "yourRecordings": "Bản ghi của bạn",
+  "noRecordings": "Chưa có bản ghi. Thử đọc đoạn đầu tiên nhé.",
+  "listenRecording": "Nghe bản ghi",
+  "deleteRecordingConfirm": "Xóa bản ghi?",
+  "recordingDeleteError": "Không xóa được bản ghi.",
+  "deleteRecording": "Xóa bản ghi",
+  "interfaceLanguage": "Ngôn ngữ giao diện",
+  "systemLanguage": "Theo thiết bị",
+  "wordLanguage": "Ngôn ngữ của từ",
+  "meaningLanguage": "Ngôn ngữ của nghĩa",
+  "languageHint": "Giọng đọc tùy thuộc các ngôn ngữ đã cài trên thiết bị.",
+  "options": "Tùy chọn",
+  "noReviewCards": "Không có thẻ cần học lại. Tắt bộ lọc để xem tất cả.",
+  "emptySet": "Danh mục chưa có từ. Nhập từ để bắt đầu.",
+  "previousCard": "Thẻ trước",
+  "stopAutoplay": "Dừng tự phát",
+  "autoplay": "Tự động phát",
+  "shuffleCards": "Trộn thẻ",
+  "nextCard": "Thẻ tiếp",
+  "listenYourself": "Đọc và nghe chính mình.",
+  "dailyReading": "Luyện đọc mỗi ngày.",
+  "wordProgress": "{count} từ · {learned} đã thuộc",
+  "@wordProgress": {"placeholders": {"count": {"type": "int"}, "learned": {"type": "int"}}},
+  "vietnamese": "Tiếng Việt",
+  "english": "Tiếng Anh",
+  "korean": "Tiếng Hàn",
+  "japanese": "Tiếng Nhật",
+  "chinese": "Tiếng Trung",
+  "french": "Tiếng Pháp",
+  "german": "Tiếng Đức",
+  "spanish": "Tiếng Tây Ban Nha",
+  "learnedCards": "{count} thẻ đã thuộc",
+  "@learnedCards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionSets": "{sessions} lượt học · {sets} danh mục",
+  "@sessionSets": {
+    "placeholders": {
+      "sessions": {
+        "type": "int"
+      },
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "setProgress": "{cards} thẻ · {learned} đã thuộc",
+  "@setProgress": {
+    "placeholders": {
+      "cards": {
+        "type": "int"
+      },
+      "learned": {
+        "type": "int"
+      }
+    }
+  },
+  "completedSessions": "{count} lượt học hoàn thành",
+  "@completedSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accuracyPercent": "Độ chính xác: {percent}%",
+  "@accuracyPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "backupReplaceNotice": "Bản sao lưu có {count} danh mục. Toàn bộ từ vựng và tiến độ hiện tại sẽ được thay thế.",
+  "@backupReplaceNotice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importLineError": "Dòng {line}: dùng TAB, nhiều dấu cách hoặc dấu phẩy để ngăn từ và nghĩa.",
+  "@importLineError": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "maxQuestions": "Tối đa {count} câu; nhập nhiều hơn sẽ dùng tất cả.",
+  "@maxQuestions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "answerReview": "{meaning}\nBạn trả lời: {answer}",
+  "@answerReview": {
+    "placeholders": {
+      "meaning": {
+        "type": "String"
+      },
+      "answer": {
+        "type": "String"
+      }
+    }
+  },
+  "questionPosition": "CÂU {current} / {total}",
+  "@questionPosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsRemaining": "{count} giây",
+  "@secondsRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wrongAnswer": "Chưa đúng. Đáp án: {answer}",
+  "@wrongAnswer": {
+    "placeholders": {
+      "answer": {
+        "type": "String"
+      }
+    }
+  },
+  "voiceUnavailable": "Thiết bị chưa có giọng {language}. Hãy tải giọng trong cài đặt hệ thống.",
+  "@voiceUnavailable": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "importSummary": "Đã thêm {added} từ · bỏ qua {duplicates} từ trùng.",
+  "@importSummary": {
+    "placeholders": {
+      "added": {
+        "type": "int"
+      },
+      "duplicates": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteSetNotice": "Xóa {title} và toàn bộ thẻ trong danh mục này?",
+  "@deleteSetNotice": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteWordNotice": "Xóa “{word}” khỏi danh mục?",
+  "@deleteWordNotice": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "cardPosition": "THẺ {current} / {total}",
+  "@cardPosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "recordingElapsed": "● Đang ghi âm · {seconds} giây",
+  "@recordingElapsed": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentMetrics": "Chính xác: {accuracy} · Trôi chảy: {fluency}",
+  "@assessmentMetrics": {
+    "placeholders": {
+      "accuracy": {
+        "type": "String"
+      },
+      "fluency": {
+        "type": "String"
+      }
+    }
+  },
+  "assessmentCompleteness": "Đầy đủ: {value}",
+  "@assessmentCompleteness": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "recognizedText": "Nhận diện: {text}",
+  "@recognizedText": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "recordingDetails": "{seconds} giây · {date}",
+  "@recordingDetails": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteRecordingNotice": "Xóa bản ghi “{title}” trên thiết bị này?",
+  "@deleteRecordingNotice": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  }
+}

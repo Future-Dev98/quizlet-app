@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'models.dart';
 import 'app_layout.dart';
+import 'app_localization.dart';
 
 class SetEditor extends StatefulWidget {
   const SetEditor({
@@ -18,6 +19,7 @@ class SetEditor extends StatefulWidget {
 }
 
 class _SetEditorState extends State<SetEditor> {
+  AppLocalizations get l10n => context.l10n;
   final form = GlobalKey<FormState>();
   late final title = TextEditingController(text: widget.initial?.title);
   late final description = TextEditingController(
@@ -38,7 +40,7 @@ class _SetEditorState extends State<SetEditor> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text(widget.initial == null ? 'Tạo danh mục' : 'Sửa danh mục'),
+      title: Text(widget.initial == null ? l10n.createSet : l10n.editSet),
     ),
     body: SafeArea(
       child: Form(
@@ -49,24 +51,24 @@ class _SetEditorState extends State<SetEditor> {
             TextFormField(
               controller: title,
               maxLength: 120,
-              decoration: const InputDecoration(labelText: 'Tên danh mục'),
-              validator: (v) => v!.trim().isEmpty ? 'Nhập tên danh mục' : null,
+              decoration: InputDecoration(labelText: l10n.setName),
+              validator: (v) => v!.trim().isEmpty ? l10n.enterSetName : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: description,
               maxLines: 3,
-              decoration: const InputDecoration(labelText: 'Mô tả'),
+              decoration: InputDecoration(labelText: l10n.description),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: folder,
               isExpanded: true,
-              decoration: const InputDecoration(labelText: 'Thư mục'),
+              decoration: InputDecoration(labelText: l10n.folder),
               items: [
-                const DropdownMenuItem<String>(
+                DropdownMenuItem<String>(
                   value: null,
-                  child: Text('Thư viện gốc'),
+                  child: Text(l10n.rootLibrary),
                 ),
                 ...widget.folders.map(
                   (f) => DropdownMenuItem(
@@ -81,12 +83,12 @@ class _SetEditorState extends State<SetEditor> {
             TextFormField(
               controller: order,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Thứ tự hiển thị'),
+              decoration: InputDecoration(labelText: l10n.displayOrder),
               validator: (v) =>
                   int.tryParse(v!) == null ||
                       int.parse(v) < 0 ||
                       int.parse(v) > 1000000
-                  ? 'Nhập số từ 0 đến 1000000'
+                  ? l10n.orderValidation
                   : null,
             ),
             const SizedBox(height: 28),
@@ -102,7 +104,7 @@ class _SetEditorState extends State<SetEditor> {
                 set.sortOrder = int.parse(order.text);
                 Navigator.pop(context, set);
               },
-              child: const Text('Lưu danh mục'),
+              child: Text(l10n.saveSet),
             ),
           ],
         ),
@@ -117,7 +119,12 @@ class ImportResult {
   final int duplicates;
 }
 
-ImportResult parseCards(String text, List<StudyCard> existing) {
+ImportResult parseCards(
+  String text,
+  List<StudyCard> existing, {
+  AppLocalizations? localization,
+}) {
+  final l10n = localization ?? lookupAppLocalizations(const Locale('vi'));
   final cards = <StudyCard>[];
   final keys = existing.map((c) => normalizeAnswer(c.term)).toSet();
   int duplicates = 0;
@@ -133,9 +140,7 @@ ImportResult parseCards(String text, List<StudyCard> existing) {
         (match?.group(2) ?? (comma < 0 ? '' : line.substring(comma + 1)))
             .trim();
     if (term.isEmpty || meaning.isEmpty) {
-      throw FormatException(
-        'Dòng ${i + 1}: dùng TAB, nhiều dấu cách hoặc dấu phẩy để ngăn từ và nghĩa.',
-      );
+      throw FormatException(l10n.importLineError(i + 1));
     }
     if (!keys.add(normalizeAnswer(term))) {
       duplicates++;
@@ -144,7 +149,7 @@ ImportResult parseCards(String text, List<StudyCard> existing) {
     cards.add(StudyCard(id: '${newId()}_$i', term: term, definition: meaning));
   }
   if (cards.isEmpty && duplicates == 0) {
-    throw const FormatException('Chưa có từ để nhập.');
+    throw FormatException(l10n.noImportWords);
   }
   return ImportResult(cards, duplicates);
 }

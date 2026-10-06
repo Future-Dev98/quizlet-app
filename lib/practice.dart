@@ -4,15 +4,20 @@ import 'package:flutter/material.dart';
 
 import 'models.dart';
 import 'app_layout.dart';
+import 'app_localization.dart';
 import 'main.dart';
 
 enum PracticeMode {
-  quiz('Kiểm tra', Icons.fact_check_outlined),
-  reflex('Phản xạ', Icons.bolt),
-  writing('Luyện viết', Icons.edit_note);
+  quiz(Icons.fact_check_outlined),
+  reflex(Icons.bolt),
+  writing(Icons.edit_note);
 
-  const PracticeMode(this.label, this.icon);
-  final String label;
+  const PracticeMode(this.icon);
+  String localizedLabel(BuildContext context) => switch (this) {
+    PracticeMode.quiz => context.l10n.quiz,
+    PracticeMode.reflex => context.l10n.reflex,
+    PracticeMode.writing => context.l10n.writing,
+  };
   final IconData icon;
 }
 
@@ -58,6 +63,7 @@ class PracticePage extends StatefulWidget {
 
 class _PracticePageState extends State<PracticePage>
     with WidgetsBindingObserver {
+  AppLocalizations get l10n => context.l10n;
   final count = TextEditingController(text: '20');
   final answer = TextEditingController();
   List<Question> questions = [];
@@ -104,9 +110,8 @@ class _PracticePageState extends State<PracticePage>
   void start() {
     final n = int.tryParse(count.text);
     if (n == null || n < 1) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Nhập số câu lớn hơn 0.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.positiveCount)));
       return;
     }
     setState(() {
@@ -213,7 +218,7 @@ class _PracticePageState extends State<PracticePage>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(widget.mode.label)),
+    appBar: AppBar(title: Text(widget.mode.localizedLabel(context))),
     body: SafeArea(
       child: Center(
         child: ConstrainedBox(
@@ -227,8 +232,8 @@ class _PracticePageState extends State<PracticePage>
                 const SizedBox(height: 24),
                 Text(
                   widget.cards.isEmpty
-                      ? 'Thêm từ vựng trước khi luyện tập.'
-                      : 'Cần ít nhất 2 nghĩa khác nhau để tạo đáp án.',
+                      ? l10n.addBeforePractice
+                      : l10n.distinctMeanings,
                 ),
               ] else if (questions.isEmpty) ...[
                 const SizedBox(height: 28),
@@ -236,34 +241,29 @@ class _PracticePageState extends State<PracticePage>
                 const SizedBox(height: 24),
                 Text(
                   writing
-                      ? 'Nhìn nghĩa, viết lại từ.'
+                      ? l10n.writingHeading
                       : reflex
-                      ? 'Nhanh tay chọn đáp án.'
-                      : 'Sẵn sàng thử sức?',
+                      ? l10n.reflexHeading
+                      : l10n.quizHeading,
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 14),
-                Text(
-                  writing
-                      ? 'Viết từ tiếng Hàn tương ứng. Bạn có thể hiện đáp án để tự ôn tập.'
-                      : 'Câu hỏi được trộn ngẫu nhiên. Đáp án sai lấy từ các từ trong danh mục.',
-                ),
+                Text(writing ? l10n.writingHint : l10n.quizHint),
                 const SizedBox(height: 32),
                 TextField(
                   controller: count,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Số câu hỏi',
-                    helperText:
-                        'Tối đa ${widget.cards.length} câu; nhập nhiều hơn sẽ dùng tất cả.',
+                    labelText: l10n.questionCount,
+                    helperText: l10n.maxQuestions(widget.cards.length),
                   ),
                 ),
                 if (reflex) ...[
                   const SizedBox(height: 20),
                   SegmentedButton<int>(
-                    segments: const [
-                      ButtonSegment(value: 3, label: Text('3 giây')),
-                      ButtonSegment(value: 5, label: Text('5 giây')),
+                    segments: [
+                      ButtonSegment(value: 3, label: Text(l10n.threeSeconds)),
+                      ButtonSegment(value: 5, label: Text(l10n.fiveSeconds)),
                     ],
                     selected: {seconds},
                     onSelectionChanged: (v) =>
@@ -271,7 +271,7 @@ class _PracticePageState extends State<PracticePage>
                   ),
                 ],
                 const SizedBox(height: 28),
-                FilledButton(onPressed: start, child: const Text('Bắt đầu')),
+                FilledButton(onPressed: start, child: Text(l10n.start)),
               ] else if (finished) ...[
                 const SizedBox(height: 30),
                 const Icon(
@@ -286,17 +286,14 @@ class _PracticePageState extends State<PracticePage>
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Mỗi lượt học là một bước tiến.',
-                  textAlign: TextAlign.center,
-                ),
+                Text(l10n.practiceProgress, textAlign: TextAlign.center),
                 const SizedBox(height: 24),
                 Text(
                   saving
-                      ? 'Đang lưu kết quả…'
+                      ? l10n.savingResult
                       : saved
-                      ? 'Đã lưu kết quả trên thiết bị.'
-                      : 'Chưa lưu được kết quả. Hãy thử lại.',
+                      ? l10n.resultSaved
+                      : l10n.resultSaveError,
                 ),
                 const SizedBox(height: 12),
                 FilledButton(
@@ -305,7 +302,7 @@ class _PracticePageState extends State<PracticePage>
                       : saved
                       ? () => Navigator.pop(context)
                       : saveResult,
-                  child: Text(saved ? 'Quay lại danh mục' : 'Thử lưu lại'),
+                  child: Text(saved ? l10n.backToSet : l10n.retrySave),
                 ),
                 const SizedBox(height: 24),
                 ...questions.asMap().entries.map(
@@ -324,7 +321,10 @@ class _PracticePageState extends State<PracticePage>
                       ),
                       title: Text(e.value.card.term),
                       subtitle: Text(
-                        '${e.value.card.definition}\nBạn trả lời: ${answers[e.key] ?? 'Bỏ qua / hết giờ'}',
+                        l10n.answerReview(
+                          e.value.card.definition,
+                          answers[e.key] ?? l10n.skipped,
+                        ),
                       ),
                     ),
                   ),
@@ -333,7 +333,7 @@ class _PracticePageState extends State<PracticePage>
                 Row(
                   children: [
                     Text(
-                      'CÂU ${index + 1} / ${questions.length}',
+                      l10n.questionPosition(index + 1, questions.length),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -342,7 +342,7 @@ class _PracticePageState extends State<PracticePage>
                     const Spacer(),
                     if (reflex)
                       Text(
-                        '$remaining giây',
+                        l10n.secondsRemaining(remaining),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                   ],
@@ -351,7 +351,7 @@ class _PracticePageState extends State<PracticePage>
                 LinearProgressIndicator(value: (index + 1) / questions.length),
                 const SizedBox(height: 32),
                 Text(
-                  writing ? 'Viết từ tương ứng với nghĩa' : 'Chọn nghĩa đúng',
+                  writing ? l10n.writeMatchingWord : l10n.chooseMeaning,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -365,7 +365,7 @@ class _PracticePageState extends State<PracticePage>
                 ),
                 const SizedBox(height: 30),
                 if (paused) ...[
-                  const Text('Bài luyện đã tạm dừng khi rời ứng dụng.'),
+                  Text(l10n.practicePaused),
                   FilledButton(
                     onPressed: () {
                       setState(() => paused = false);
@@ -375,7 +375,7 @@ class _PracticePageState extends State<PracticePage>
                         tick();
                       }
                     },
-                    child: const Text('Tiếp tục'),
+                    child: Text(l10n.resume),
                   ),
                 ] else if (writing) ...[
                   TextField(
@@ -390,22 +390,20 @@ class _PracticePageState extends State<PracticePage>
                         check(v);
                       }
                     },
-                    decoration: const InputDecoration(
-                      hintText: 'Gõ từ tiếng Hàn…',
-                    ),
+                    decoration: InputDecoration(hintText: l10n.typeWord),
                   ),
                   const SizedBox(height: 16),
                   if (!checked)
                     TextButton(
                       onPressed: () => check(null),
-                      child: const Text('Hiện đáp án'),
+                      child: Text(l10n.showAnswer),
                     ),
                   if (!checked)
                     FilledButton(
                       onPressed: answer.text.trim().isEmpty
                           ? null
                           : () => check(answer.text),
-                      child: const Text('Kiểm tra'),
+                      child: Text(l10n.quiz),
                     ),
                 ] else
                   ...questions[index].options.asMap().entries.map(
@@ -444,7 +442,7 @@ class _PracticePageState extends State<PracticePage>
                       TextButton.icon(
                         onPressed: index > 0 ? () => goTo(index - 1) : null,
                         icon: const Icon(Icons.chevron_left),
-                        label: const Text('Câu trước'),
+                        label: Text(l10n.previousQuestion),
                       ),
                       const Spacer(),
                       TextButton.icon(
@@ -452,7 +450,7 @@ class _PracticePageState extends State<PracticePage>
                             ? () => goTo(index + 1)
                             : null,
                         icon: const Icon(Icons.chevron_right),
-                        label: const Text('Câu tiếp'),
+                        label: Text(l10n.nextQuestion),
                       ),
                     ],
                   ),
@@ -461,8 +459,12 @@ class _PracticePageState extends State<PracticePage>
                   const SizedBox(height: 18),
                   Text(
                     right
-                        ? 'Chính xác!'
-                        : 'Chưa đúng. Đáp án: ${writing ? questions[index].card.term : questions[index].card.definition}',
+                        ? l10n.correctAnswer
+                        : l10n.wrongAnswer(
+                            writing
+                                ? questions[index].card.term
+                                : questions[index].card.definition,
+                          ),
                     style: TextStyle(
                       color: right ? Colors.green : Colors.deepOrange,
                       fontWeight: FontWeight.bold,
@@ -474,8 +476,8 @@ class _PracticePageState extends State<PracticePage>
                       onPressed: next,
                       child: Text(
                         index == questions.length - 1
-                            ? 'Xem kết quả'
-                            : 'Tiếp theo',
+                            ? l10n.viewResult
+                            : l10n.next,
                       ),
                     ),
                   ],

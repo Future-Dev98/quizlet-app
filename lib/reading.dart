@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'main.dart';
 import 'models.dart';
 import 'app_layout.dart';
+import 'app_localization.dart';
 
 class ReadingPage extends StatefulWidget {
   const ReadingPage({
@@ -26,6 +27,7 @@ class ReadingPage extends StatefulWidget {
 }
 
 class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
+  AppLocalizations get l10n => context.l10n;
   final recorder = AudioRecorder();
   final player = AudioPlayer();
   final title = TextEditingController();
@@ -105,10 +107,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
       if (mounted) setState(() => loaded = true);
     } catch (_) {
       if (mounted) {
-        setState(
-          () => error =
-              'Không đọc được bản ghi trên máy. Dữ liệu hiện có được giữ lại.',
-        );
+        setState(() => error = l10n.recordingsLoadError);
       }
     }
   }
@@ -127,7 +126,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
           .then((_) {});
       await draftWrite;
     } catch (_) {
-      if (mounted) setState(() => error = 'Không lưu được bài đọc nháp.');
+      if (mounted) setState(() => error = l10n.draftSaveError);
     }
   }
 
@@ -145,9 +144,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
     try {
       await player.stop();
       if (!await recorder.hasPermission()) {
-        throw const FormatException(
-          'Chưa có quyền micro. Bật quyền micro cho Từ Vựng trong cài đặt thiết bị.',
-        );
+        throw FormatException(l10n.microphonePermission);
       }
       await saveDraft();
       final path = '${directory!.path}/${newId()}.wav';
@@ -176,9 +173,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
     } catch (e) {
       if (mounted) {
         setState(
-          () => error = e is FormatException
-              ? e.message
-              : 'Không khởi động được micro. Hãy kiểm tra quyền và thử lại.',
+          () => error = e is FormatException ? e.message : l10n.microphoneError,
         );
       }
     } finally {
@@ -207,7 +202,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
       if (path == null ||
           !await File(path).exists() ||
           await File(path).length() <= 44) {
-        throw const FormatException('Bản ghi trống. Hãy thử lại.');
+        throw FormatException(l10n.emptyRecording);
       }
       currentPath = path;
       if (widget.pronunciation) {
@@ -218,7 +213,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
             'setId': widget.setId,
             'file': path.split(RegExp(r'[/\\]')).last,
             'title': title.text.trim().isEmpty
-                ? 'Bài đọc không tên'
+                ? l10n.untitledReading
                 : title.text.trim(),
             'text': text.text.trim(),
             'seconds': elapsed,
@@ -239,7 +234,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
         setState(
           () => error = e is FormatException
               ? e.message
-              : 'Chưa lưu hoặc chấm được bản ghi. Hãy thử lại.',
+              : l10n.recordingSaveError,
         );
       }
     } finally {
@@ -253,15 +248,13 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
         uri.host.isEmpty ||
         uri.scheme != 'https' ||
         uri.userInfo.isNotEmpty) {
-      throw const FormatException(
-        'Nhập URL HTTPS máy chủ dự án, ví dụ https://your-domain/api/pronunciation. Khóa Azure chỉ đặt trên máy chủ.',
-      );
+      throw FormatException(l10n.endpointValidation);
     }
     if (!RegExp(r'[\uac00-\ud7a3\u1100-\u11ff\u3130-\u318f]')
         .hasMatch(text.text)) {
-      throw const FormatException('Chấm phát âm cần từ tiếng Hàn.');
+      throw FormatException(l10n.koreanAssessmentOnly);
     }
-    if (elapsed < 1) throw const FormatException('Hãy đọc ít nhất một giây.');
+    if (elapsed < 1) throw FormatException(l10n.recordOneSecond);
     final root = await getApplicationDocumentsDirectory();
     await File('${root.path}/speech_endpoint.txt')
         .writeAsString(uri.toString(), flush: true);
@@ -281,9 +274,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
       ).timeout(const Duration(seconds: 35));
       final result = jsonDecode(response.body);
       if (response.statusCode != 200) {
-        throw FormatException(
-          result['error'] ?? 'Máy chủ chưa chấm được phát âm.',
-        );
+        throw FormatException(result['error'] ?? l10n.assessmentError);
       }
       if (mounted) {
         setState(() => assessment = Map<String, dynamic>.from(result));
@@ -303,7 +294,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
         if (mounted) setState(() => playingPath = path);
       }
     } catch (_) {
-      if (mounted) setState(() => error = 'Không phát được bản ghi này.');
+      if (mounted) setState(() => error = l10n.recordingPlayError);
     }
   }
 
@@ -312,7 +303,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
     canPop: !recording && !busy,
     child: Scaffold(
       appBar: AppBar(
-        title: Text(widget.pronunciation ? 'Chấm phát âm' : 'Luyện đọc'),
+        title: Text(widget.pronunciation ? l10n.pronunciation : l10n.reading),
       ),
       body: SafeArea(
         child: Center(
@@ -331,15 +322,15 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                 const SizedBox(height: 20),
                 Text(
                   widget.pronunciation
-                      ? 'Đọc và nghe chính mình.'
-                      : 'Luyện đọc mỗi ngày.',
+                      ? l10n.listenYourself
+                      : l10n.dailyReading,
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
                 const SizedBox(height: 12),
                 Text(
                   widget.pronunciation
-                      ? 'Chấm điểm qua Azure như dự án gốc. Âm thanh sẽ gửi đến máy chủ bạn cấu hình; dữ liệu từ vựng vẫn nằm trên thiết bị.'
-                      : 'Bài đọc và bản ghi âm lưu trên thiết bị này. Giữ 5 bản ghi gần nhất, mỗi bản ghi tối đa 5 phút.',
+                      ? l10n.assessmentNotice
+                      : l10n.recordingNotice,
                 ),
                 const SizedBox(height: 24),
                 if (widget.pronunciation) ...[
@@ -347,8 +338,8 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                     controller: endpoint,
                     enabled: !recording && !busy,
                     keyboardType: TextInputType.url,
-                    decoration: const InputDecoration(
-                      labelText: 'URL HTTPS chấm phát âm',
+                    decoration: InputDecoration(
+                      labelText: l10n.assessmentUrl,
                       hintText: 'https://your-domain/api/pronunciation',
                     ),
                   ),
@@ -358,7 +349,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                     controller: title,
                     enabled: !recording && !busy,
                     onChanged: changed,
-                    decoration: const InputDecoration(labelText: 'Tên bài đọc'),
+                    decoration: InputDecoration(labelText: l10n.readingTitle),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -373,8 +364,8 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                   maxLength: widget.pronunciation ? 300 : null,
                   decoration: InputDecoration(
                     labelText: widget.pronunciation
-                        ? 'Từ tiếng Hàn'
-                        : 'Nội dung bài đọc',
+                        ? l10n.word
+                        : l10n.readingText,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -390,7 +381,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      '● Đang ghi âm · $elapsed giây',
+                      l10n.recordingElapsed(elapsed),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.red,
@@ -407,12 +398,12 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                   icon: Icon(recording ? Icons.stop : Icons.mic),
                   label: Text(
                     busy
-                        ? 'Đang xử lý…'
+                        ? l10n.processing
                         : recording
                         ? widget.pronunciation
-                              ? 'Dừng và chấm'
-                              : 'Dừng và lưu'
-                        : 'Bắt đầu ghi âm',
+                              ? l10n.stopAssess
+                              : l10n.stopSave
+                        : l10n.startRecording,
                   ),
                 ),
                 if (widget.pronunciation &&
@@ -423,7 +414,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                   OutlinedButton.icon(
                     onPressed: () => play(currentPath!),
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Nghe lại bản ghi'),
+                    label: Text(l10n.replayRecording),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -435,14 +426,14 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                           setState(
                             () => error = e is FormatException
                                 ? e.message
-                                : 'Không kết nối được máy chủ.',
+                                : l10n.connectionError,
                           );
                         }
                       } finally {
                         if (mounted) setState(() => busy = false);
                       }
                     },
-                    child: const Text('Chấm lại bản ghi'),
+                    child: Text(l10n.reassessRecording),
                   ),
                 ],
                 if (assessment != null) ...[
@@ -458,11 +449,22 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                             style: Theme.of(context).textTheme.headlineLarge,
                           ),
                           Text(
-                            'Chính xác: ${assessment!['accuracy']} · Trôi chảy: ${assessment!['fluency']}',
+                            l10n.assessmentMetrics(
+                              assessment!['accuracy'].toString(),
+                              assessment!['fluency'].toString(),
+                            ),
                           ),
-                          Text('Đầy đủ: ${assessment!['completeness']}'),
+                          Text(
+                            l10n.assessmentCompleteness(
+                              assessment!['completeness'].toString(),
+                            ),
+                          ),
                           const SizedBox(height: 10),
-                          Text('Nhận diện: ${assessment!['recognized']}'),
+                          Text(
+                            l10n.recognizedText(
+                              assessment!['recognized'].toString(),
+                            ),
+                          ),
                           ...((assessment!['words'] as List?) ?? []).map(
                             (w) => Text(
                               '${w['word']}: ${w['accuracy']} · ${w['error']}',
@@ -476,17 +478,15 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                 if (!widget.pronunciation) ...[
                   const SizedBox(height: 28),
                   Text(
-                    'Bản ghi của bạn',
+                    l10n.yourRecordings,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   if (recordings
                       .where((r) => r['setId'] == widget.setId)
                       .isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        'Chưa có bản ghi. Thử đọc đoạn đầu tiên nhé.',
-                      ),
+                      child: Text(l10n.noRecordings),
                     ),
                   ...recordings.where((r) => r['setId'] == widget.setId).map((
                     r,
@@ -496,10 +496,13 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                       child: ExpansionTile(
                         title: Text(r['title']),
                         subtitle: Text(
-                          '${r['seconds']} giây · ${r['date'].toString().split('T').first}',
+                          l10n.recordingDetails(
+                            r['seconds'].toString(),
+                            r['date'].toString().split('T').first,
+                          ),
                         ),
                         leading: IconButton(
-                          tooltip: 'Nghe bản ghi',
+                          tooltip: l10n.listenRecording,
                           onPressed: recording || busy
                               ? null
                               : () => play(path),
@@ -518,8 +521,10 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                                 : () async {
                                     if (!await confirm(
                                       context,
-                                      'Xóa bản ghi?',
-                                      'Xóa bản ghi “${r['title']}” trên thiết bị này?',
+                                      l10n.deleteRecordingConfirm,
+                                      l10n.deleteRecordingNotice(
+                                        r['title'].toString(),
+                                      ),
                                     )) {
                                       return;
                                     }
@@ -543,7 +548,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                                       if (mounted) {
                                         setState(
                                           () =>
-                                              error = 'Không xóa được bản ghi.',
+                                              error = l10n.recordingDeleteError,
                                         );
                                       }
                                     } finally {
@@ -551,7 +556,7 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
                                     }
                                   },
                             icon: const Icon(Icons.delete_outline),
-                            label: const Text('Xóa bản ghi'),
+                            label: Text(l10n.deleteRecording),
                           ),
                         ],
                       ),

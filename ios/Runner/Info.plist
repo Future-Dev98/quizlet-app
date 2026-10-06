@@ -8,6 +8,11 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Từ Vựng</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>vi</string>
+		<string>en</string>
+	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Ứng dụng dùng micro để luyện đọc, lưu bản ghi trên thiết bị và chấm phát âm khi bạn yêu cầu.</string>
 	<key>CFBundleExecutable</key>

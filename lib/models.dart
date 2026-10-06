@@ -26,10 +26,12 @@ class StudyCard {
     this.starred = false,
     this.mastered = false,
     this.seen = false,
+    this.details,
   });
   final String id;
   String term, definition;
   bool starred, mastered, seen;
+  WordDetails? details;
   Map<String, dynamic> toJson() => {
     'id': id,
     'term': term,
@@ -37,6 +39,7 @@ class StudyCard {
     'starred': starred,
     'mastered': mastered,
     'seen': seen,
+    if (details != null) 'details': details!.toJson(),
   };
   factory StudyCard.fromJson(Map<String, dynamic> j) {
     if (j['id'] is! String ||
@@ -53,6 +56,60 @@ class StudyCard {
       starred: j['starred'] == true,
       mastered: j['mastered'] == true,
       seen: j['seen'] == true,
+      details: j['details'] == null ? null : WordDetails.fromJson(j['details']),
+    );
+  }
+}
+
+class WordDetails {
+  WordDetails({
+    required this.language,
+    required this.sourceUrl,
+    required this.fetchedAt,
+    this.usage = const [],
+    this.examples = const [],
+    this.synonyms = const [],
+    this.definitions = const [],
+  });
+  final String language, sourceUrl, fetchedAt;
+  final List<String> usage, examples, synonyms, definitions;
+  bool get isEmpty =>
+      usage.isEmpty &&
+      examples.isEmpty &&
+      synonyms.isEmpty &&
+      definitions.isEmpty;
+  Map<String, dynamic> toJson() => {
+    'language': language,
+    'sourceUrl': sourceUrl,
+    'fetchedAt': fetchedAt,
+    'usage': usage,
+    'examples': examples,
+    'synonyms': synonyms,
+    'definitions': definitions,
+  };
+  factory WordDetails.fromJson(dynamic value) {
+    if (value is! Map ||
+        value['language'] is! String ||
+        value['sourceUrl'] is! String ||
+        value['fetchedAt'] is! String) {
+      throw const FormatException('Invalid word details.');
+    }
+    List<String> strings(String key) {
+      final list = value[key] ?? [];
+      if (list is! List || list.any((e) => e is! String)) {
+        throw const FormatException('Invalid word details.');
+      }
+      return List<String>.from(list);
+    }
+
+    return WordDetails(
+      language: value['language'],
+      sourceUrl: value['sourceUrl'],
+      fetchedAt: value['fetchedAt'],
+      usage: strings('usage'),
+      examples: strings('examples'),
+      synonyms: strings('synonyms'),
+      definitions: strings('definitions'),
     );
   }
 }
@@ -205,6 +262,25 @@ class StudyData {
       }
     }
     final settings = Map<String, dynamic>.from(j['settings'] as Map? ?? {});
+    if (settings.containsKey('interfaceLanguage') &&
+        !['vi', 'en'].contains(settings['interfaceLanguage'])) {
+      throw const FormatException('Invalid interface language.');
+    }
+    for (final key in ['wordLanguage', 'meaningLanguage']) {
+      if (settings.containsKey(key) &&
+          ![
+            'ko-KR',
+            'vi-VN',
+            'en-US',
+            'ja-JP',
+            'zh-CN',
+            'fr-FR',
+            'de-DE',
+            'es-ES',
+          ].contains(settings[key])) {
+        throw const FormatException('Invalid speech language.');
+      }
+    }
     for (final key in [
       'starredOnly',
       'trackProgress',

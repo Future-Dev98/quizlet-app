@@ -10,6 +10,14 @@ import 'package:my_app/models.dart';
 import 'package:my_app/storage.dart';
 import 'package:my_app/editor.dart';
 import 'package:my_app/practice.dart';
+import 'package:my_app/app_localization.dart';
+import 'package:my_app/dictionary.dart';
+import 'package:my_app/word_tile.dart';
+
+class EmptyDictionary implements WordDictionary {
+  @override
+  Future<WordDetails?> lookup(String term, String language) async => null;
+}
 
 class MemoryStorage implements StudyStorage {
   MemoryStorage(this.data);
@@ -43,6 +51,14 @@ void main() {
     }
   });
   setUp(() {
+    TestWidgetsFlutterBinding.instance.platformDispatcher.localesTestValue =
+        const [Locale('vi')];
+    addTearDown(
+      TestWidgetsFlutterBinding
+          .instance
+          .platformDispatcher
+          .clearLocalesTestValue,
+    );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(const MethodChannel('flutter_tts'), (
           call,
@@ -62,7 +78,7 @@ void main() {
     await tester.pumpWidget(
       RepaintBoundary(
         key: const ValueKey('capture'),
-        child: MyApp(storage: storage),
+        child: MyApp(storage: storage, dictionary: EmptyDictionary()),
       ),
     );
     await tester.pumpAndSettle();
@@ -113,6 +129,93 @@ void main() {
     expect(tester.takeException(), isNull);
     await capture(tester, 'iphone13-study');
   });
+  testWidgets('redesigned word list supports details and quick status', (
+    tester,
+  ) async {
+    final storage = MemoryStorage(
+      StudyData(
+        sets: [
+          StudySet(
+            id: 'korean',
+            title: 'Động từ',
+            cards: [
+              StudyCard(id: 'k1', term: '가다', definition: 'đi'),
+              StudyCard(
+                id: 'k2',
+                term: '오다',
+                definition: 'đến',
+                mastered: true,
+              ),
+              StudyCard(id: 'k3', term: '먹다', definition: 'ăn', starred: true),
+              StudyCard(id: 'k4', term: '마시다', definition: 'uống'),
+              StudyCard(id: 'k5', term: '보다', definition: 'xem, nhìn'),
+            ],
+          ),
+        ],
+        darkMode: true,
+      ),
+    );
+    await phone(tester, storage);
+    await tester.tap(find.text('Tiếp tục học   →'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('add-word')).hitTestable(),
+      findsOneWidget,
+    );
+    await capture(tester, 'word-list-add-toolbar');
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('vocabulary-header')),
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(
+      find
+          .ancestor(
+            of: find.byKey(const ValueKey('vocabulary-header')),
+            matching: find.byType(Row),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    await capture(tester, 'word-list-redesign-dark');
+    final tile = find.byType(WordTile).first;
+    await tester.ensureVisible(tile);
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: tile,
+        matching: find.widgetWithText(FilterChip, 'Đã thuộc'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(storage.data.sets.single.cards.first.mastered, isTrue);
+    await tester.tap(
+      find.descendant(
+        of: tile,
+        matching: find.widgetWithText(FilterChip, 'Cần học lại'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(storage.data.sets.single.cards.first.mastered, isFalse);
+    expect(storage.data.sets.single.cards.first.starred, isTrue);
+    await tester.tap(
+      find.descendant(of: tile, matching: find.byTooltip('Thao tác với từ')),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sửa từ'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sửa từ vựng'), findsOneWidget);
+    await tester.tap(find.text('Hủy'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.descendant(of: tile, matching: find.text('가다')));
+    await tester.pumpAndSettle();
+    expect(find.text('Cách sử dụng'), findsOneWidget);
+    await tester.tap(find.text('Đóng'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('card mastery persists through restart', (tester) async {
     final storage = MemoryStorage(StudyData.demo());
     await phone(tester, storage);
@@ -169,6 +272,8 @@ void main() {
     PracticeResult? result;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: PracticePage(
           cards: [card],
           mode: PracticeMode.writing,
@@ -198,6 +303,8 @@ void main() {
     final cards = StudyData.demo().sets.first.cards;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: PracticePage(
           cards: cards,
           mode: PracticeMode.reflex,
@@ -284,7 +391,7 @@ void main() {
       );
       expect(tester.takeException(), isNull, reason: 'Definition at $size');
       if (size.width == 390) await capture(tester, 'iphone13-study-compact');
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
     }
   });
@@ -305,6 +412,7 @@ void main() {
     await tester.ensureVisible(next);
     await tester.enterText(next, '0,5');
     await tester.ensureVisible(find.text('Lưu tùy chọn'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Lưu tùy chọn'));
     await tester.pumpAndSettle();
     expect(storage.data.settings['flipDelayMs'], 500);
@@ -353,8 +461,8 @@ void main() {
     await phone(tester, storage);
     await tester.tap(find.text('Cá nhân'));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Dark'));
-    await tester.tap(find.text('Dark'));
+    await tester.ensureVisible(find.text('Tối'));
+    await tester.tap(find.text('Tối'));
     await tester.pumpAndSettle();
     expect(storage.data.darkMode, isTrue);
     expect(find.text('Nền tối · Chữ sáng'), findsOneWidget);
@@ -389,12 +497,12 @@ void main() {
     final text = tester.widget<Text>(find.text('Sự tình cờ may mắn'));
     expect(text.style!.color!.computeLuminance(), greaterThan(.7));
     await capture(tester, 'iphone13-study-dark');
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Cá nhân'));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Default'));
-    await tester.tap(find.text('Default'));
+    await tester.ensureVisible(find.text('Sáng'));
+    await tester.tap(find.text('Sáng'));
     await tester.pumpAndSettle();
     expect(storage.data.darkMode, isFalse);
     expect(
@@ -410,6 +518,8 @@ void main() {
     int saves = 0;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: PracticePage(
           cards: cards,
           mode: PracticeMode.quiz,

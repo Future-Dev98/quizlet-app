@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 
 import 'models.dart';
 import 'app_layout.dart';
+import 'app_localization.dart';
 import 'app_theme.dart';
 import 'storage.dart';
 import 'editor.dart';
 import 'study.dart';
+import 'dictionary.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,14 +21,17 @@ const mint = Color(0xFFCDEEDF);
 typedef UpdateData = Future<bool> Function(StudyData);
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, this.storage});
+  const MyApp({super.key, this.storage, this.dictionary});
   final StudyStorage? storage;
+  final WordDictionary? dictionary;
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  AppLocalizations get l10n => messenger.currentContext!.l10n;
   late final storage = widget.storage ?? LocalStudyStorage();
+  late final dictionary = widget.dictionary ?? WiktionaryDictionary();
   StudyData? data;
   Object? error;
   bool saving = false;
@@ -56,11 +61,7 @@ class _MyAppState extends State<MyApp> {
       return true;
     } catch (_) {
       messenger.currentState?.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Chưa lưu được dữ liệu. Kiểm tra dung lượng máy và thử lại.',
-          ),
-        ),
+        SnackBar(content: Text(l10n.saveError)),
       );
       return false;
     } finally {
@@ -71,40 +72,61 @@ class _MyAppState extends State<MyApp> {
   ThemeData theme(Brightness brightness) => buildAppTheme(brightness);
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: 'Từ Vựng',
+    onGenerateTitle: (context) => context.l10n.appTitle,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    locale: data?.settings['interfaceLanguage'] is String
+        ? Locale(data!.settings['interfaceLanguage'] as String)
+        : null,
+    localeListResolutionCallback: (locales, supported) {
+      for (final locale in locales ?? <Locale>[]) {
+        for (final candidate in supported) {
+          if (candidate.languageCode == locale.languageCode) return candidate;
+        }
+      }
+      return const Locale('vi');
+    },
     debugShowCheckedModeBanner: false,
     scaffoldMessengerKey: messenger,
     theme: theme(Brightness.light),
     darkTheme: theme(Brightness.dark),
     themeMode: data?.darkMode == true ? ThemeMode.dark : ThemeMode.light,
     home: data == null
-        ? Scaffold(
-            body: SafeArea(
-              child: Center(
-                child: error == null
-                    ? const CircularProgressIndicator()
-                    : Padding(
-                        padding: const EdgeInsets.all(28),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.folder_off_outlined, size: 48),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'Không đọc được dữ liệu. Dữ liệu hiện có được giữ lại.',
+        ? Builder(
+            builder: (context) {
+              final l10n = context.l10n;
+              return Scaffold(
+                body: SafeArea(
+                  child: Center(
+                    child: error == null
+                        ? const CircularProgressIndicator()
+                        : Padding(
+                            padding: const EdgeInsets.all(28),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.folder_off_outlined, size: 48),
+                                const SizedBox(height: 20),
+                                Text(l10n.loadError),
+                                const SizedBox(height: 16),
+                                FilledButton(
+                                  onPressed: load,
+                                  child: Text(l10n.retry),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            FilledButton(
-                              onPressed: load,
-                              child: const Text('Thử lại'),
-                            ),
-                          ],
-                        ),
-                      ),
-              ),
-            ),
+                          ),
+                  ),
+                ),
+              );
+            },
           )
-        : HomePage(data: data!, update: update, saving: saving),
+        : HomePage(
+            data: data!,
+            update: update,
+            saving: saving,
+            dictionary: dictionary,
+          ),
   );
 }
 
@@ -114,16 +136,20 @@ class HomePage extends StatefulWidget {
     required this.data,
     required this.update,
     required this.saving,
+    required this.dictionary,
   });
   final StudyData data;
   final UpdateData update;
   final bool saving;
+  final WordDictionary dictionary;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  AppLocalizations get l10n => context.l10n;
   int tab = 0;
+  int languageRevision = 0;
   String query = '';
   String? folderId;
   Future<void> edit([StudySet? set]) async {
@@ -150,6 +176,7 @@ class _HomePageState extends State<HomePage> {
   void open(StudySet set) => Navigator.of(context).push(
     MaterialPageRoute(
       builder: (_) => SetPage(
+        dictionary: widget.dictionary,
         initial: set,
         folders: widget.data.folders,
         settings: widget.data.settings,
@@ -191,21 +218,21 @@ class _HomePageState extends State<HomePage> {
     bottomNavigationBar: NavigationBar(
       selectedIndex: tab,
       onDestinationSelected: (i) => setState(() => tab = i),
-      destinations: const [
+      destinations: [
         NavigationDestination(
           icon: Icon(Icons.space_dashboard_outlined),
           selectedIcon: Icon(Icons.space_dashboard),
-          label: 'Trang chủ',
+          label: l10n.home,
         ),
         NavigationDestination(
           icon: Icon(Icons.style_outlined),
           selectedIcon: Icon(Icons.style),
-          label: 'Thư viện',
+          label: l10n.library,
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),
           selectedIcon: Icon(Icons.person),
-          label: 'Cá nhân',
+          label: l10n.profile,
         ),
       ],
     ),
@@ -246,8 +273,8 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.layers_rounded, color: Colors.white),
             ),
             const SizedBox(width: 10),
-            const Text(
-              'từ vựng',
+            Text(
+              l10n.brand,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
             ),
             const Spacer(),
@@ -260,18 +287,18 @@ class _HomePageState extends State<HomePage> {
           child: FilledButton.icon(
             onPressed: widget.saving ? null : () => edit(),
             icon: const Icon(Icons.add, size: 18),
-            label: const Text('Tạo danh mục'),
+            label: Text(l10n.createSet),
             style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
           ),
         ),
         const SizedBox(height: 20),
         Text(
-          tab == 0 ? 'Mỗi từ mới là một\nbước tiến nhỏ.' : 'Thư viện của bạn',
+          tab == 0 ? l10n.homeHeading : l10n.yourLibrary,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: 10),
         Text(
-          'Học theo nhịp của bạn. Ghi nhớ mỗi ngày.',
+          l10n.tagline,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -287,13 +314,13 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.auto_awesome, color: mint, size: 19),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'HÀNH TRÌNH CỦA BẠN',
+                        l10n.journey,
                         style: TextStyle(
                           color: mint,
                           fontSize: 11,
@@ -306,7 +333,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '$learned thẻ đã thuộc',
+                  l10n.learnedCards(learned),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 26,
@@ -315,7 +342,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '${widget.data.sessions} lượt học · ${widget.data.sets.length} danh mục',
+                  l10n.sessionSets(
+                    widget.data.sessions,
+                    widget.data.sets.length,
+                  ),
                   style: const TextStyle(color: Color(0xFFBDBDD5)),
                 ),
                 const SizedBox(height: 18),
@@ -334,7 +364,7 @@ class _HomePageState extends State<HomePage> {
                       backgroundColor: mint,
                       foregroundColor: ink,
                     ),
-                    child: const Text('Tiếp tục học   →'),
+                    child: Text(l10n.continueLearning),
                   ),
                 ),
               ],
@@ -344,8 +374,8 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 24),
         TextField(
           onChanged: (v) => setState(() => query = v),
-          decoration: const InputDecoration(
-            hintText: 'Tìm danh mục, từ vựng…',
+          decoration: InputDecoration(
+            hintText: l10n.searchSets,
             prefixIcon: Icon(Icons.search),
           ),
         ),
@@ -354,7 +384,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             if (folderId != null)
               IconButton(
-                tooltip: 'Thư mục cha',
+                tooltip: l10n.parentFolder,
                 onPressed: () => setState(
                   () => folderId = widget.data.folders
                       .firstWhere((f) => f.id == folderId)
@@ -365,13 +395,13 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: Text(
                 folderId == null
-                    ? 'Thư viện của bạn'
+                    ? l10n.yourLibrary
                     : widget.data.folderPath(folderId),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
             IconButton(
-              tooltip: 'Tạo thư mục',
+              tooltip: l10n.createFolder,
               onPressed: widget.saving ? null : () => editFolder(),
               icon: const Icon(Icons.create_new_folder_outlined),
             ),
@@ -388,10 +418,10 @@ class _HomePageState extends State<HomePage> {
                   color: Color(0xFFD9AB5B),
                 ),
                 title: Text(f.name),
-                subtitle: const Text('Mở thư mục'),
+                subtitle: Text(l10n.openFolder),
                 onTap: () => setState(() => folderId = f.id),
                 trailing: IconButton(
-                  tooltip: 'Sửa thư mục',
+                  tooltip: l10n.editFolder,
                   onPressed: () => editFolder(f),
                   icon: const Icon(Icons.more_horiz),
                 ),
@@ -399,10 +429,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         if (sets.isEmpty && folders.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(24),
-            child: Text('Chưa có danh mục phù hợp. Tạo danh mục để bắt đầu.'),
-          ),
+          Padding(padding: EdgeInsets.all(24), child: Text(l10n.emptyLibrary)),
         ...sets.map(
           (s) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -453,7 +480,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       const SizedBox(height: 8),
                       Text(
-                        '${s.cards.length} thẻ · ${s.learned} đã thuộc',
+                        l10n.setProgress(s.cards.length, s.learned),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: 13,
@@ -497,23 +524,23 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, state) => AlertDialog(
-          title: Text(folder == null ? 'Tạo thư mục' : 'Sửa thư mục'),
+          title: Text(folder == null ? l10n.createFolder : l10n.editFolder),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: name,
-                decoration: const InputDecoration(labelText: 'Tên thư mục'),
+                decoration: InputDecoration(labelText: l10n.folderName),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 initialValue: parent,
                 isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Thư mục cha'),
+                decoration: InputDecoration(labelText: l10n.parentFolder),
                 items: [
-                  const DropdownMenuItem<String>(
+                  DropdownMenuItem<String>(
                     value: null,
-                    child: Text('Thư viện gốc'),
+                    child: Text(l10n.rootLibrary),
                   ),
                   ...choices.map(
                     (f) => DropdownMenuItem(
@@ -533,17 +560,17 @@ class _HomePageState extends State<HomePage> {
             if (folder != null)
               TextButton(
                 onPressed: () => Navigator.pop(context, 'delete'),
-                child: const Text('Xóa thư mục trống'),
+                child: Text(l10n.deleteEmptyFolder),
               ),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Hủy'),
+              child: Text(context.l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
                 if (name.text.trim().isNotEmpty) Navigator.pop(context, 'save');
               },
-              child: const Text('Lưu'),
+              child: Text(l10n.save),
             ),
           ],
         ),
@@ -556,13 +583,8 @@ class _HomePageState extends State<HomePage> {
     if (action == 'delete') {
       if (next.folders.any((f) => f.parentId == folder!.id) ||
           next.sets.any((s) => s.folderId == folder!.id)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Chỉ xóa được thư mục trống. Hãy chuyển nội dung ra trước.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.folderNotEmpty)));
         return;
       }
       next.folders.removeWhere((f) => f.id == folder!.id);
@@ -580,9 +602,9 @@ class _HomePageState extends State<HomePage> {
     padding: EdgeInsets.all(mobileInset(context)),
     children: [
       const SizedBox(height: 12),
-      Text('Góc học tập', style: Theme.of(context).textTheme.headlineLarge),
+      Text(l10n.studyCorner, style: Theme.of(context).textTheme.headlineLarge),
       const SizedBox(height: 8),
-      const Text('Kiến thức của bạn, hành trình của bạn.'),
+      Text(l10n.yourJourney),
       const SizedBox(height: 28),
       Card(
         child: Padding(
@@ -592,36 +614,68 @@ class _HomePageState extends State<HomePage> {
               const Icon(Icons.insights, size: 42, color: purple),
               const SizedBox(height: 16),
               Text(
-                '${widget.data.sessions} lượt học hoàn thành',
+                l10n.completedSessions(widget.data.sessions),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
               Text(
-                'Độ chính xác: ${widget.data.answers == 0 ? 0 : (widget.data.correct / widget.data.answers * 100).round()}%',
+                l10n.accuracyPercent(
+                  widget.data.answers == 0
+                      ? 0
+                      : (widget.data.correct / widget.data.answers * 100)
+                            .round(),
+                ),
               ),
             ],
           ),
         ),
       ),
       const SizedBox(height: 24),
-      Text('Settings · Theme', style: Theme.of(context).textTheme.titleLarge),
+      DropdownButtonFormField<String>(
+        key: ValueKey(
+          '${widget.data.settings['interfaceLanguage'] ?? 'system'}-$languageRevision',
+        ),
+        initialValue:
+            widget.data.settings['interfaceLanguage'] as String? ?? 'system',
+        isExpanded: true,
+        decoration: InputDecoration(labelText: l10n.interfaceLanguage),
+        items: [
+          DropdownMenuItem(value: 'system', child: Text(l10n.systemLanguage)),
+          const DropdownMenuItem(value: 'vi', child: Text('Tiếng Việt')),
+          const DropdownMenuItem(value: 'en', child: Text('English')),
+        ],
+        onChanged: widget.saving
+            ? null
+            : (value) async {
+                final next = widget.data.copy();
+                if (value == 'system') {
+                  next.settings.remove('interfaceLanguage');
+                } else {
+                  next.settings['interfaceLanguage'] = value;
+                }
+                final saved = await widget.update(next);
+                if (!saved && mounted) setState(() => languageRevision++);
+              },
+      ),
+      const SizedBox(height: 24),
+      Text(l10n.themeSettings, style: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: 8),
       Text(
-        'Chọn màu nền và chữ cho ứng dụng.',
+        l10n.themeHint,
         style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       const SizedBox(height: 16),
       SegmentedButton<bool>(
-        segments: const [
+        segments: [
           ButtonSegment(
             value: false,
             icon: Icon(Icons.light_mode_outlined),
-            label: Text('Default'),
+            label: Text(l10n.lightTheme),
           ),
           ButtonSegment(
             value: true,
             icon: Icon(Icons.dark_mode_outlined),
-            label: Text('Dark'),
+            label: Text(l10n.darkTheme),
           ),
         ],
         selected: {widget.data.darkMode},
@@ -644,14 +698,12 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Mỗi từ mới là một bước tiến nhỏ.',
+              l10n.smallStep,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              widget.data.darkMode
-                  ? 'Nền tối · Chữ sáng'
-                  : 'Nền sáng · Chữ tối',
+              widget.data.darkMode ? l10n.darkPreview : l10n.lightPreview,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -662,29 +714,24 @@ class _HomePageState extends State<HomePage> {
       const SizedBox(height: 24),
       ListTile(
         leading: const Icon(Icons.copy_all),
-        title: const Text('Sao chép bản sao lưu'),
-        subtitle: const Text('Bộ từ, thư mục, cài đặt và tiến độ (JSON)'),
+        title: Text(l10n.copyBackup),
+        subtitle: Text(l10n.backupHint),
         onTap: () async {
           await Clipboard.setData(ClipboardData(text: widget.data.encode()));
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Đã sao chép bản sao lưu. Bản ghi âm được lưu riêng trên máy.',
-                ),
-              ),
-            );
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(l10n.backupCopied)));
           }
         },
       ),
       ListTile(
         leading: const Icon(Icons.download_outlined),
-        title: const Text('Khôi phục từ JSON'),
+        title: Text(l10n.restoreJson),
         onTap: widget.saving ? null : restore,
       ),
       const SizedBox(height: 24),
       Text(
-        'Dữ liệu lưu riêng trên thiết bị, không cần tài khoản. Gỡ app có thể xóa dữ liệu; hãy sao lưu trước khi đổi máy. Chấm phát âm cần máy chủ Azure và kết nối mạng.',
+        l10n.privacyNotice,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           height: 1.6,
@@ -697,20 +744,20 @@ class _HomePageState extends State<HomePage> {
     final source = await showSettledDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Khôi phục dữ liệu'),
+        title: Text(l10n.restoreData),
         content: TextField(
           controller: input,
           maxLines: 7,
-          decoration: const InputDecoration(hintText: 'Dán JSON đã sao lưu…'),
+          decoration: InputDecoration(hintText: l10n.pasteBackup),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, input.text),
-            child: const Text('Kiểm tra'),
+            child: Text(l10n.quiz),
           ),
         ],
       ),
@@ -721,19 +768,14 @@ class _HomePageState extends State<HomePage> {
       final next = StudyData.decode(source);
       final yes = await confirm(
         context,
-        'Thay thế dữ liệu hiện tại?',
-        'Bản sao lưu có ${next.sets.length} danh mục. Toàn bộ từ vựng và tiến độ hiện tại sẽ được thay thế.',
+        l10n.replaceData,
+        l10n.backupReplaceNotice(next.sets.length),
       );
       if (yes) await widget.update(next);
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'JSON không hợp lệ. Dữ liệu hiện tại được giữ nguyên.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.invalidJson)));
       }
     }
   }
@@ -748,11 +790,11 @@ Future<bool> confirm(BuildContext context, String title, String text) async =>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Đồng ý'),
+            child: Text(context.l10n.agree),
           ),
         ],
       ),

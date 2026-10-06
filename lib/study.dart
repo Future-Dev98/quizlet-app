@@ -9,6 +9,11 @@ import 'editor.dart';
 import 'practice.dart';
 import 'reading.dart';
 import 'app_layout.dart';
+import 'app_localization.dart';
+import 'dictionary.dart';
+import 'card_details.dart';
+import 'word_suggestions.dart';
+import 'word_tile.dart';
 
 typedef SaveSet = Future<bool> Function(StudySet);
 typedef SaveResult = Future<bool> Function(StudySet, int, int);
@@ -23,11 +28,13 @@ class SetPage extends StatefulWidget {
     required this.onResult,
     required this.onDelete,
     required this.onSettings,
+    required this.dictionary,
   });
   final StudySet initial;
   final List<Folder> folders;
   final Map<String, dynamic> settings;
   final SaveSet onSave;
+  final WordDictionary dictionary;
   final SaveResult onResult;
   final Future<bool> Function() onDelete;
   final Future<bool> Function(Map<String, dynamic>) onSettings;
@@ -36,6 +43,7 @@ class SetPage extends StatefulWidget {
 }
 
 class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
+  AppLocalizations get l10n => context.l10n;
   late StudySet set = StudySet.fromJson(widget.initial.toJson());
   late Map<String, dynamic> settings = Map.of(widget.settings);
   final tts = FlutterTts();
@@ -46,6 +54,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
   bool flipped = false, playing = false, busy = false;
   int generation = 0;
   String search = '';
+  final searchController = TextEditingController();
   bool get onlyStars => settings['starredOnly'] == true;
   bool get reverse => settings['reverse'] == true;
   List<StudyCard> get cards => order
@@ -80,6 +89,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    searchController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     generation++;
     tts.stop();
@@ -148,20 +158,24 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     if (settings['speechEnabled'] == false) return;
     try {
       await tts.stop();
-      final language = meaning ? 'vi-VN' : 'ko-KR';
+      final language =
+          settings[meaning ? 'meaningLanguage' : 'wordLanguage'] as String? ??
+          (meaning ? 'vi-VN' : 'ko-KR');
       if (await tts.isLanguageAvailable(language) != true) {
-        message(
-          'Thiết bị chưa có giọng ${meaning ? 'tiếng Việt' : 'tiếng Hàn'}. Hãy tải giọng trong cài đặt hệ thống.',
-        );
+        message(l10n.voiceUnavailable(language));
         return;
       }
       await tts.setLanguage(language);
       final voice = settings[meaning ? 'viVoice' : 'koVoice'];
-      if (voice is Map) await tts.setVoice(Map<String, String>.from(voice));
+      if (voice is Map &&
+          voice['locale'].toString().split('-').first ==
+              language.split('-').first) {
+        await tts.setVoice(Map<String, String>.from(voice));
+      }
       await tts.setSpeechRate((settings['rate'] as num? ?? .45).toDouble());
       await tts.speak(text);
     } catch (_) {
-      message('Không phát được giọng đọc trên thiết bị này.');
+      message(l10n.speechError);
     }
   }
 
@@ -240,10 +254,6 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     try {
       voices = (await tts.getVoices as List)
           .map((v) => {'name': '${v['name']}', 'locale': '${v['locale']}'})
-          .where(
-            (v) =>
-                v['locale']!.startsWith('ko') || v['locale']!.startsWith('vi'),
-          )
           .toSet()
           .toList();
     } catch (_) {
@@ -288,14 +298,12 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 ? '${next[key]['name']}|${next[key]['locale']}'
                 : '';
             return DropdownButtonFormField<String>(
+              key: ValueKey('$key-$locale'),
               isExpanded: true,
               initialValue: choices.containsKey(value) ? value : '',
               decoration: InputDecoration(labelText: label),
               items: [
-                const DropdownMenuItem(
-                  value: '',
-                  child: Text('Giọng mặc định'),
-                ),
+                DropdownMenuItem(value: '', child: Text(l10n.defaultVoice)),
                 ...choices.entries.map(
                   (e) => DropdownMenuItem(
                     value: e.key,
@@ -310,6 +318,29 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
             );
           }
 
+          Widget languagePicker(
+            String key,
+            String fallback,
+            String voiceKey,
+            String label,
+          ) => DropdownButtonFormField<String>(
+            initialValue: next[key] as String? ?? fallback,
+            isExpanded: true,
+            decoration: InputDecoration(labelText: label),
+            items: studyLanguages
+                .map(
+                  (code) => DropdownMenuItem(
+                    value: code,
+                    child: Text(studyLanguageName(context, code)),
+                  ),
+                )
+                .toList(),
+            onChanged: (value) => state(() {
+              next[key] = value;
+              next.remove(voiceKey);
+            }),
+          );
+
           Widget delay(String key, String label, int fallback) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: TextFormField(
@@ -320,8 +351,8 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
               ),
               decoration: InputDecoration(
                 labelText: label,
-                suffixText: 'giây',
-                helperText: '0.5 giây = 500 ms · Từ 0.001 đến 60 giây',
+                suffixText: l10n.secondsUnit,
+                helperText: l10n.delayHint,
               ),
               validator: (value) {
                 final seconds = double.tryParse(
@@ -331,7 +362,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                     !seconds.isFinite ||
                     seconds < .001 ||
                     seconds > 60) {
-                  return 'Nhập thời gian từ 0.001 đến 60 giây';
+                  return l10n.delayValidation;
                 }
                 return null;
               },
@@ -356,19 +387,19 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   padding: EdgeInsets.all(mobileInset(context)),
                   children: [
                     Text(
-                      'Tùy chọn thẻ',
+                      l10n.cardOptions,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 12),
-                    toggle('starredOnly', 'Chỉ thẻ cần học lại', false),
-                    toggle('trackProgress', 'Theo dõi tiến độ xem thẻ', true),
-                    toggle('reverse', 'Hiển thị nghĩa ở mặt trước', false),
-                    toggle('speechEnabled', 'Bật giọng đọc', true),
-                    toggle('autoSpeak', 'Tự đọc khi chuyển thẻ', false),
-                    toggle('loop', 'Lặp lại khi hết thẻ', false),
-                    toggle('speakWord', 'Đọc mặt trước khi tự phát', true),
-                    toggle('speakMeaning', 'Đọc mặt sau khi tự phát', true),
-                    const Text('Tốc độ đọc'),
+                    toggle('starredOnly', l10n.starredOnly, false),
+                    toggle('trackProgress', l10n.trackProgress, true),
+                    toggle('reverse', l10n.reverseCards, false),
+                    toggle('speechEnabled', l10n.speechEnabled, true),
+                    toggle('autoSpeak', l10n.autoSpeak, false),
+                    toggle('loop', l10n.loopCards, false),
+                    toggle('speakWord', l10n.speakFront, true),
+                    toggle('speakMeaning', l10n.speakBack, true),
+                    Text(l10n.speechRate),
                     Slider(
                       value: (next['rate'] as num? ?? .45).toDouble(),
                       min: .1,
@@ -377,33 +408,61 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                       label: '${next['rate'] ?? .45}',
                       onChanged: (v) => state(() => next['rate'] = v),
                     ),
-                    delay('flipDelayMs', 'Chờ lật thẻ', 3000),
-                    delay('nextDelayMs', 'Chờ chuyển thẻ', 2000),
-                    number('wordRepeats', 'Số lần đọc mặt trước', 1, [
+                    delay('flipDelayMs', l10n.flipDelay, 3000),
+                    delay('nextDelayMs', l10n.nextDelay, 2000),
+                    number('wordRepeats', l10n.frontRepeats, 1, [
                       1,
                       2,
                       3,
                       4,
                       5,
                     ]),
-                    number('meaningRepeats', 'Số lần đọc mặt sau', 1, [
+                    number('meaningRepeats', l10n.backRepeats, 1, [
                       1,
                       2,
                       3,
                       4,
                       5,
                     ]),
-                    voice('koVoice', 'ko', 'Giọng tiếng Hàn'),
+                    languagePicker(
+                      'wordLanguage',
+                      'ko-KR',
+                      'koVoice',
+                      l10n.wordLanguage,
+                    ),
                     const SizedBox(height: 16),
-                    voice('viVoice', 'vi', 'Giọng tiếng Việt'),
+                    voice(
+                      'koVoice',
+                      (next['wordLanguage'] as String? ?? 'ko-KR')
+                          .split('-')
+                          .first,
+                      l10n.wordVoice,
+                    ),
+                    const SizedBox(height: 16),
+                    languagePicker(
+                      'meaningLanguage',
+                      'vi-VN',
+                      'viVoice',
+                      l10n.meaningLanguage,
+                    ),
+                    const SizedBox(height: 16),
+                    voice(
+                      'viVoice',
+                      (next['meaningLanguage'] as String? ?? 'vi-VN')
+                          .split('-')
+                          .first,
+                      l10n.meaningVoice,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(l10n.languageHint),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       initialValue: next['font'] as String? ?? 'system',
-                      decoration: const InputDecoration(labelText: 'Kiểu chữ'),
-                      items: const [
+                      decoration: InputDecoration(labelText: l10n.font),
+                      items: [
                         DropdownMenuItem(
                           value: 'system',
-                          child: Text('Mặc định'),
+                          child: Text(l10n.defaultFont),
                         ),
                         DropdownMenuItem(value: 'serif', child: Text('Serif')),
                         DropdownMenuItem(
@@ -420,7 +479,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                         timingForm.currentState!.save();
                         Navigator.pop(context, next);
                       },
-                      child: const Text('Lưu tùy chọn'),
+                      child: Text(l10n.saveOptions),
                     ),
                   ],
                 ),
@@ -450,6 +509,90 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     if (result != null) await save(result);
   }
 
+  Future<void> addCard() async {
+    stop();
+    final form = GlobalKey<FormState>();
+    final term = TextEditingController();
+    final meaning = TextEditingController();
+    final card = await showSettledDialog<StudyCard>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.addWord),
+        content: SizedBox(
+          width: 440,
+          child: SingleChildScrollView(
+            child: Form(
+              key: form,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    key: const ValueKey('new-word-term'),
+                    controller: term,
+                    autofocus: true,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(labelText: l10n.word),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.enterWordMeaning;
+                      }
+                      if (set.cards.any(
+                        (c) =>
+                            normalizeAnswer(c.term) == normalizeAnswer(value),
+                      )) {
+                        return l10n.duplicateWord;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    key: const ValueKey('new-word-meaning'),
+                    controller: meaning,
+                    maxLines: 3,
+                    decoration: InputDecoration(labelText: l10n.meaning),
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? l10n.enterWordMeaning
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.autoDetailsHint,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (form.currentState!.validate()) {
+                Navigator.pop(
+                  context,
+                  StudyCard(
+                    id: newId(),
+                    term: term.text.trim(),
+                    definition: meaning.text.trim(),
+                  ),
+                );
+              }
+            },
+            child: Text(l10n.saveWord),
+          ),
+        ],
+      ),
+    );
+    term.dispose();
+    meaning.dispose();
+    if (card != null && mounted) await addCards([card]);
+  }
+
   Future<void> import() async {
     stop();
     final input = TextEditingController();
@@ -458,20 +601,18 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, state) => AlertDialog(
-          title: const Text('Thêm định nghĩa'),
+          title: Text(l10n.addDefinitions),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Mỗi dòng: từ + TAB / nhiều dấu cách / dấu phẩy + nghĩa. Từ trùng sẽ được bỏ qua.',
-                ),
+                Text(l10n.importHint),
                 const SizedBox(height: 16),
                 TextField(
                   controller: input,
                   maxLines: 8,
                   decoration: InputDecoration(
-                    hintText: '사랑하다, yêu\n공부하다, học',
+                    hintText: l10n.importExample,
                     errorText: error,
                   ),
                 ),
@@ -481,17 +622,20 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Hủy'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
                 try {
-                  Navigator.pop(context, parseCards(input.text, set.cards));
+                  Navigator.pop(
+                    context,
+                    parseCards(input.text, set.cards, localization: l10n),
+                  );
                 } on FormatException catch (e) {
                   state(() => error = e.message);
                 }
               },
-              child: const Text('Nhập từ'),
+              child: Text(l10n.importWords),
             ),
           ],
         ),
@@ -499,12 +643,58 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     );
     input.dispose();
     if (result == null || !mounted) return;
-    final next = StudySet.fromJson(set.toJson())..cards.addAll(result.cards);
+    await addCards(result.cards, duplicates: result.duplicates);
+  }
+
+  Future<void> addCards(List<StudyCard> newCards, {int duplicates = 0}) async {
+    final missing = newCards.isEmpty
+        ? 0
+        : await lookupNewCards(
+            context,
+            newCards,
+            widget.dictionary,
+            settings['wordLanguage'] as String? ?? 'ko-KR',
+          );
+    if (!mounted) return;
+    final next = StudySet.fromJson(set.toJson())..cards.addAll(newCards);
     if (await save(next) && mounted) {
       setState(() => order = set.cards.map((c) => c.id).toList());
-      message(
-        'Đã thêm ${result.cards.length} từ · bỏ qua ${result.duplicates} từ trùng.',
-      );
+      message(l10n.importSummary(newCards.length, duplicates));
+      if ((missing ?? 0) > 0) message(l10n.detailsMissing(missing!));
+    }
+  }
+
+  Future<void> toggleWordStatus(StudyCard card, {required bool learned}) async {
+    stop();
+    final next = StudySet.fromJson(set.toJson());
+    final item = next.cards.firstWhere((c) => c.id == card.id);
+    if (learned) {
+      item.mastered = !item.mastered;
+      if (item.mastered) item.starred = false;
+    } else {
+      item.starred = !item.starred;
+      if (item.starred) item.mastered = false;
+    }
+    await save(next);
+  }
+
+  Future<void> deleteCard(StudyCard card) async {
+    stop();
+    if (!await confirm(
+          context,
+          l10n.deleteWordConfirm,
+          l10n.deleteWordNotice(card.term),
+        ) ||
+        !mounted) {
+      return;
+    }
+    final next = StudySet.fromJson(set.toJson())
+      ..cards.removeWhere((c) => c.id == card.id);
+    if (await save(next) && mounted) {
+      setState(() {
+        order.remove(card.id);
+        index = 0;
+      });
     }
   }
 
@@ -517,35 +707,37 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, state) => AlertDialog(
-          title: const Text('Sửa từ vựng'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: term,
-                decoration: InputDecoration(
-                  labelText: 'Từ tiếng Hàn',
-                  errorText: error,
+          title: Text(l10n.editWord),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: term,
+                  decoration: InputDecoration(
+                    labelText: l10n.word,
+                    errorText: error,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: definition,
-                maxLines: 3,
-                decoration: const InputDecoration(labelText: 'Nghĩa'),
-              ),
-            ],
+                const SizedBox(height: 12),
+                TextField(
+                  controller: definition,
+                  maxLines: 3,
+                  decoration: InputDecoration(labelText: l10n.meaning),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Hủy'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
                 if (term.text.trim().isEmpty ||
                     definition.text.trim().isEmpty) {
-                  state(() => error = 'Nhập đầy đủ từ và nghĩa');
+                  state(() => error = l10n.enterWordMeaning);
                   return;
                 }
                 if (set.cards.any(
@@ -553,27 +745,66 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                       c.id != card.id &&
                       normalizeAnswer(c.term) == normalizeAnswer(term.text),
                 )) {
-                  state(() => error = 'Từ này đã có trong danh mục');
+                  state(() => error = l10n.duplicateWord);
                   return;
                 }
                 Navigator.pop(context, true);
               },
-              child: const Text('Lưu'),
+              child: Text(l10n.save),
             ),
           ],
         ),
       ),
     );
     if (ok == true) {
+      if (!mounted) {
+        term.dispose();
+        definition.dispose();
+        return;
+      }
       final next = StudySet.fromJson(set.toJson());
       final c = next.cards.firstWhere((c) => c.id == card.id);
+      final changedTerm = normalizeAnswer(c.term) != normalizeAnswer(term.text);
       c.term = term.text.trim();
       c.definition = definition.text.trim();
       c.mastered = false;
+      if (changedTerm) {
+        c.details = null;
+        await lookupNewCards(
+          context,
+          [c],
+          widget.dictionary,
+          settings['wordLanguage'] as String? ?? 'ko-KR',
+        );
+      }
+      if (!mounted) {
+        term.dispose();
+        definition.dispose();
+        return;
+      }
       await save(next);
     }
     term.dispose();
     definition.dispose();
+  }
+
+  Future<void> showDetails(StudyCard card) async {
+    stop();
+    await showDialog<void>(
+      context: context,
+      builder: (_) => CardDetailsDialog(
+        card: card,
+        dictionary: widget.dictionary,
+        language: settings['wordLanguage'] as String? ?? 'ko-KR',
+        onSave: (details) async {
+          final next = StudySet.fromJson(set.toJson());
+          final index = next.cards.indexWhere((c) => c.id == card.id);
+          if (index < 0 || !mounted) return false;
+          next.cards[index].details = details;
+          return save(next);
+        },
+      ),
+    );
   }
 
   Future<void> practice(PracticeMode mode) async {
@@ -619,8 +850,8 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
               stop();
               if (await confirm(
                     context,
-                    'Xóa danh mục?',
-                    'Xóa ${set.title} và toàn bộ thẻ trong danh mục này?',
+                    l10n.deleteSetConfirm,
+                    l10n.deleteSetNotice(set.title),
                   ) &&
                   await widget.onDelete() &&
                   context.mounted) {
@@ -628,9 +859,9 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
               }
             }
           },
-          itemBuilder: (_) => const [
-            PopupMenuItem(value: 'edit', child: Text('Sửa danh mục')),
-            PopupMenuItem(value: 'delete', child: Text('Xóa danh mục')),
+          itemBuilder: (_) => [
+            PopupMenuItem(value: 'edit', child: Text(l10n.editSet)),
+            PopupMenuItem(value: 'delete', child: Text(l10n.deleteSet)),
           ],
         ),
       ],
@@ -651,29 +882,49 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 children: [
                   Expanded(
                     child: Text(
-                      '${set.cards.length} từ · ${set.learned} đã thuộc',
+                      l10n.wordProgress(set.cards.length, set.learned),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Tùy chọn',
+                    tooltip: l10n.options,
                     onPressed: options,
                     icon: const Icon(Icons.tune),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
+              Wrap(
+                spacing: 10,
+                runSpacing: 8,
+                children: [
+                  FilledButton.icon(
+                    key: const ValueKey('add-word'),
+                    onPressed: busy ? null : addCard,
+                    icon: const Icon(Icons.add_rounded, size: 20),
+                    label: Text(l10n.addWord),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: busy ? null : import,
+                    icon: const Icon(Icons.playlist_add_rounded, size: 20),
+                    label: Text(l10n.importWords),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
               if (current == null)
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(32),
-                    child: Text(
-                      onlyStars
-                          ? 'Không có thẻ cần học lại. Tắt bộ lọc để xem tất cả.'
-                          : 'Danh mục chưa có từ. Nhập từ để bắt đầu.',
-                    ),
+                    child: Text(onlyStars ? l10n.noReviewCards : l10n.emptySet),
                   ),
                 )
               else
@@ -685,17 +936,17 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 runSpacing: 8,
                 children: [
                   IconButton.filledTonal(
-                    tooltip: 'Thẻ trước',
+                    tooltip: l10n.previousCard,
                     onPressed: busy ? null : () => move(-1),
                     icon: const Icon(Icons.chevron_left),
                   ),
                   IconButton.filledTonal(
-                    tooltip: playing ? 'Dừng tự phát' : 'Tự động phát',
+                    tooltip: playing ? l10n.stopAutoplay : l10n.autoplay,
                     onPressed: autoplay,
                     icon: Icon(playing ? Icons.pause : Icons.play_arrow),
                   ),
                   IconButton.filledTonal(
-                    tooltip: 'Trộn thẻ',
+                    tooltip: l10n.shuffleCards,
                     onPressed: () {
                       stop();
                       setState(() {
@@ -707,7 +958,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                     icon: const Icon(Icons.shuffle),
                   ),
                   IconButton.filledTonal(
-                    tooltip: 'Thẻ tiếp',
+                    tooltip: l10n.nextCard,
                     onPressed: busy ? null : () => move(1),
                     icon: const Icon(Icons.chevron_right),
                   ),
@@ -737,15 +988,16 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                       size: 16,
                     ),
                     label: Text(
-                      current!.mastered
-                          ? 'Đánh dấu chưa thuộc'
-                          : 'Đã thuộc từ này',
+                      current!.mastered ? l10n.markUnlearned : l10n.markLearned,
                     ),
                   ),
                 ),
               ],
               const SizedBox(height: 28),
-              Text('Luyện tập', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                l10n.practice,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -754,12 +1006,12 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   for (final mode in PracticeMode.values)
                     ActionChip(
                       avatar: Icon(mode.icon, size: 18),
-                      label: Text(mode.label),
+                      label: Text(mode.localizedLabel(context)),
                       onPressed: () => practice(mode),
                     ),
                   ActionChip(
                     avatar: const Icon(Icons.mic_none, size: 18),
-                    label: const Text('Luyện đọc'),
+                    label: Text(l10n.reading),
                     onPressed: () {
                       stop();
                       Navigator.push(
@@ -776,7 +1028,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   ),
                   ActionChip(
                     avatar: const Icon(Icons.record_voice_over, size: 18),
-                    label: const Text('Chấm phát âm'),
+                    label: Text(l10n.pronunciation),
                     onPressed: current == null
                         ? null
                         : () {
@@ -800,35 +1052,90 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 children: [
                   Expanded(
                     child: Text(
-                      'Từ vựng',
+                      l10n.vocabulary,
+                      key: const ValueKey('vocabulary-header'),
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  TextButton.icon(
-                    onPressed: busy ? null : import,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Nhập từ'),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${set.cards.where((c) => matchesCard(c, search)).length}',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton.filledTonal(
+                    tooltip: l10n.addWord,
+                    onPressed: busy ? null : addCard,
+                    icon: const Icon(Icons.add_rounded),
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.wordListHint,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextField(
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  hintText: 'Tìm trong danh mục',
+                controller: searchController,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  hintText: l10n.searchInSet,
+                  suffixIcon: search.isEmpty
+                      ? null
+                      : IconButton(
+                          tooltip: l10n.clearSearch,
+                          onPressed: () {
+                            searchController.clear();
+                            setState(() => search = '');
+                          },
+                          icon: const Icon(Icons.close_rounded),
+                        ),
                 ),
                 onChanged: (v) => setState(() => search = v),
               ),
+              if (search.trim().isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.wordSuggestions,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                for (final card in suggestCards(set.cards, search))
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(card.term),
+                    subtitle: Text(card.definition),
+                    trailing: const Icon(Icons.info_outline),
+                    onTap: () => showDetails(card),
+                  ),
+              ],
               const SizedBox(height: 12),
+              if (search.isNotEmpty &&
+                  !set.cards.any((c) => matchesCard(c, search)))
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(l10n.noCards),
+                ),
               ReorderableListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 buildDefaultDragHandles: false,
                 itemCount: set.cards
-                    .where(
-                      (c) => '${c.term} ${c.definition}'.toLowerCase().contains(
-                        search.toLowerCase(),
-                      ),
-                    )
+                    .where((c) => matchesCard(c, search))
                     .length,
                 onReorderItem: (a, b) async {
                   if (search.isNotEmpty || busy) return;
@@ -845,167 +1152,30 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 },
                 itemBuilder: (context, i) {
                   final c = set.cards
-                      .where(
-                        (c) => '${c.term} ${c.definition}'
-                            .toLowerCase()
-                            .contains(search.toLowerCase()),
-                      )
+                      .where((c) => matchesCard(c, search))
                       .elementAt(i);
-                  return Card(
+                  return WordTile(
                     key: ValueKey(c.id),
-                    elevation: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          if (search.isEmpty)
-                            ReorderableDragStartListener(
-                              index: i,
-                              child: const Icon(
-                                Icons.drag_indicator,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  c.term,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium,
-                                ),
-                                const SizedBox(height: 5),
-                                Text(c.definition),
-                                Wrap(
-                                  children: [
-                                    IconButton(
-                                      tooltip: 'Đã thuộc',
-                                      visualDensity: VisualDensity.compact,
-                                      onPressed: busy
-                                          ? null
-                                          : () async {
-                                              final next = StudySet.fromJson(
-                                                set.toJson(),
-                                              );
-                                              final item = next.cards
-                                                  .firstWhere(
-                                                    (v) => v.id == c.id,
-                                                  );
-                                              item.mastered = !item.mastered;
-                                              if (item.mastered) {
-                                                item.starred = false;
-                                              }
-                                              await save(next);
-                                            },
-                                      icon: Icon(
-                                        c.mastered
-                                            ? Icons.check_circle
-                                            : Icons.check_circle_outline,
-                                        size: 20,
-                                        color: c.mastered
-                                            ? Colors.green
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Cần học lại',
-                                      visualDensity: VisualDensity.compact,
-                                      onPressed: busy
-                                          ? null
-                                          : () async {
-                                              final next = StudySet.fromJson(
-                                                set.toJson(),
-                                              );
-                                              final item = next.cards
-                                                  .firstWhere(
-                                                    (v) => v.id == c.id,
-                                                  );
-                                              item.starred = !item.starred;
-                                              if (item.starred) {
-                                                item.mastered = false;
-                                              }
-                                              await save(next);
-                                            },
-                                      icon: Icon(
-                                        c.starred
-                                            ? Icons.star
-                                            : Icons.star_border,
-                                        size: 20,
-                                        color: Colors.amber,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Nghe từ',
-                                      visualDensity: VisualDensity.compact,
-                                      onPressed: () {
-                                        stop();
-                                        speak(c.term, false);
-                                      },
-                                      icon: const Icon(
-                                        Icons.volume_up_outlined,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Sửa từ',
-                                      visualDensity: VisualDensity.compact,
-                                      onPressed: () => editCard(c),
-                                      icon: const Icon(
-                                        Icons.edit_outlined,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Xóa từ',
-                                      visualDensity: VisualDensity.compact,
-                                      onPressed: busy
-                                          ? null
-                                          : () async {
-                                              stop();
-                                              if (!await confirm(
-                                                context,
-                                                'Xóa từ?',
-                                                'Xóa “${c.term}” khỏi danh mục?',
-                                              )) {
-                                                return;
-                                              }
-                                              final next =
-                                                  StudySet.fromJson(
-                                                      set.toJson(),
-                                                    )
-                                                    ..cards.removeWhere(
-                                                      (v) => v.id == c.id,
-                                                    );
-                                              if (await save(next) && mounted) {
-                                                setState(() {
-                                                  order.remove(c.id);
-                                                  index = 0;
-                                                });
-                                              }
-                                            },
-                                      icon: const Icon(
-                                        Icons.delete_outline,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    card: c,
+                    index: i,
+                    canReorder: search.isEmpty && !busy,
+                    busy: busy,
+                    onDetails: () => showDetails(c),
+                    onListen: () {
+                      stop();
+                      speak(c.term, false);
+                    },
+                    onLearned: () => toggleWordStatus(c, learned: true),
+                    onReview: () => toggleWordStatus(c, learned: false),
+                    onEdit: () => editCard(c),
+                    onDelete: () => deleteCard(c),
                   );
                 },
               ),
               if (set.attempts.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 Text(
-                  'Kết quả gần đây',
+                  l10n.recentResults,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 ...set.attempts
@@ -1015,7 +1185,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                         contentPadding: EdgeInsets.zero,
                         leading: const Icon(Icons.history),
                         title: Text(
-                          '${PracticeMode.values.where((m) => m.name == a['mode']).firstOrNull?.label ?? a['mode']} · ${a['score']}/${a['total']}',
+                          '${PracticeMode.values.where((m) => m.name == a['mode']).firstOrNull?.localizedLabel(context) ?? a['mode']} · ${a['score']}/${a['total']}',
                         ),
                         subtitle: Text(
                           '${a['date']}'
@@ -1042,7 +1212,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     return Column(
       children: [
         Text(
-          'THẺ ${index + 1} / ${cards.length}',
+          l10n.cardPosition(index + 1, cards.length),
           style: TextStyle(
             color: colors.primary,
             fontSize: 11,
@@ -1090,7 +1260,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   children: [
                     Expanded(
                       child: Text(
-                        meaning ? 'NGHĨA TIẾNG VIỆT' : 'TỪ TIẾNG HÀN',
+                        meaning ? l10n.meaningFace : l10n.wordFace,
                         style: TextStyle(
                           color: colors.primary,
                           fontSize: 10,
@@ -1099,7 +1269,12 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Cần học lại',
+                      tooltip: l10n.cardDetails,
+                      onPressed: () => showDetails(c),
+                      icon: const Icon(Icons.info_outline),
+                    ),
+                    IconButton(
+                      tooltip: l10n.needsReview,
                       onPressed: busy
                           ? null
                           : () => status(starred: !c.starred),
@@ -1131,7 +1306,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 ),
                 const SizedBox(height: 25),
                 IconButton(
-                  tooltip: 'Nghe mẫu',
+                  tooltip: l10n.listenSample,
                   onPressed: () {
                     stop();
                     speak(meaning ? c.definition : c.term, meaning);
@@ -1139,7 +1314,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   icon: Icon(Icons.volume_up_outlined, color: colors.primary),
                 ),
                 Text(
-                  'Chạm để lật · Vuốt để chuyển',
+                  l10n.cardGestureHint,
                   style: TextStyle(
                     color: colors.onSurfaceVariant,
                     fontSize: 12,
