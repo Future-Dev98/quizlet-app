@@ -647,20 +647,55 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
   }
 
   Future<void> addCards(List<StudyCard> newCards, {int duplicates = 0}) async {
-    final missing = newCards.isEmpty
-        ? 0
-        : await lookupNewCards(
-            context,
-            newCards,
-            widget.dictionary,
-            settings['wordLanguage'] as String? ?? 'ko-KR',
-          );
-    if (!mounted) return;
-    final next = StudySet.fromJson(set.toJson())..cards.addAll(newCards);
-    if (await save(next) && mounted) {
-      setState(() => order = set.cards.map((c) => c.id).toList());
-      message(l10n.importSummary(newCards.length, duplicates));
-      if ((missing ?? 0) > 0) message(l10n.detailsMissing(missing!));
+    if (busy) return;
+    if (newCards.isEmpty) {
+      message(l10n.importSummary(0, duplicates));
+      return;
+    }
+    setState(() => busy = true);
+    try {
+      final missing = await lookupNewCards(
+        context,
+        newCards,
+        widget.dictionary,
+        settings['wordLanguage'] as String? ?? 'ko-KR',
+      );
+      if (!mounted) return;
+      final next = StudySet.fromJson(set.toJson())..cards.addAll(newCards);
+      final navigator = Navigator.of(context, rootNavigator: true);
+      final loading = DialogRoute<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: Text(context.l10n.savingWords),
+            content: const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        ),
+      );
+      unawaited(navigator.push(loading));
+      bool ok;
+      try {
+        ok = await widget.onSave(next);
+      } finally {
+        if (loading.isActive) navigator.removeRoute(loading);
+      }
+      if (ok && mounted) {
+        setState(() {
+          set = next;
+          order = set.cards.map((c) => c.id).toList();
+        });
+        message(l10n.importSummary(newCards.length, duplicates));
+        if ((missing ?? 0) > 0) message(l10n.detailsMissing(missing!));
+      }
+    } catch (_) {
+      message(l10n.saveError);
+    } finally {
+      if (mounted) setState(() => busy = false);
     }
   }
 

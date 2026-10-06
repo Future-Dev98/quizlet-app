@@ -974,6 +974,12 @@ abstract class AppLocalizations {
   /// **'Nhập từ'**
   String get importWords;
 
+  /// No description provided for @savingWords.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang lưu từ…'**
+  String get savingWords;
+
   /// No description provided for @editWord.
   ///
   /// In vi, this message translates to:

@@ -468,6 +468,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get importWords => 'Nhập từ';
 
   @override
+  String get savingWords => 'Đang lưu từ…';
+
+  @override
   String get editWord => 'Sửa từ vựng';
 
   @override

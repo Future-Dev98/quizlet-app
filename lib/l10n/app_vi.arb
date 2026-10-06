@@ -147,6 +147,7 @@
   "importHint": "Mỗi dòng: từ + TAB / nhiều dấu cách / dấu phẩy + nghĩa. Từ trùng sẽ được bỏ qua.",
   "importExample": "사랑하다, yêu\n공부하다, học",
   "importWords": "Nhập từ",
+  "savingWords": "Đang lưu từ…",
   "editWord": "Sửa từ vựng",
   "word": "Từ",
   "meaning": "Nghĩa",

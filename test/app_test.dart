@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -19,14 +20,24 @@ class EmptyDictionary implements WordDictionary {
   Future<WordDetails?> lookup(String term, String language) async => null;
 }
 
+class DelayedDictionary implements WordDictionary {
+  final result = Completer<WordDetails?>();
+  @override
+  Future<WordDetails?> lookup(String term, String language) => result.future;
+}
+
 class MemoryStorage implements StudyStorage {
   MemoryStorage(this.data);
   StudyData data;
   bool fail = false;
+  Completer<void>? saveGate;
+  int saveCalls = 0;
   @override
   Future<StudyData> load() async => data.copy();
   @override
   Future<void> save(StudyData next) async {
+    saveCalls++;
+    if (saveGate != null) await saveGate!.future;
     if (fail) throw const FileSystemException('Full');
     data = next.copy();
   }
@@ -68,7 +79,11 @@ void main() {
           return 1;
         });
   });
-  Future<void> phone(WidgetTester tester, StudyStorage storage) async {
+  Future<void> phone(
+    WidgetTester tester,
+    StudyStorage storage, {
+    WordDictionary? dictionary,
+  }) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     tester.view.padding = const FakeViewPadding(top: 47, bottom: 34);
@@ -78,7 +93,10 @@ void main() {
     await tester.pumpWidget(
       RepaintBoundary(
         key: const ValueKey('capture'),
-        child: MyApp(storage: storage, dictionary: EmptyDictionary()),
+        child: MyApp(
+          storage: storage,
+          dictionary: dictionary ?? EmptyDictionary(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -264,6 +282,100 @@ void main() {
     expect(storage.data.sets.single.cards.first.definition, 'trường học');
     expect(tester.takeException(), isNull);
   });
+  testWidgets('bulk import locks lookup and shows loading until saved', (
+    tester,
+  ) async {
+    final storage = MemoryStorage(StudyData.demo());
+    final dictionary = DelayedDictionary();
+    await phone(tester, storage, dictionary: dictionary);
+    await tester.tap(find.text('Tiếp tục học   →'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Nhập từ'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byType(TextField).last,
+      '학교, trường  học\n학생\t học sinh',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Nhập từ'));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('add-word')))
+          .onPressed,
+      isNull,
+    );
+    expect(storage.saveCalls, 0);
+    storage.saveGate = Completer<void>();
+    dictionary.result.complete(null);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Đang lưu từ…'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(storage.saveCalls, 1);
+    expect(storage.data.sets.first.cards.any((c) => c.term == '학교'), isFalse);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(find.text('Đang lưu từ…'), findsOneWidget);
+    storage.saveGate!.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('Đang lưu từ…'), findsNothing);
+    expect(
+      storage.data.sets.first.cards
+          .where((c) => c.term == '학교')
+          .single
+          .definition,
+      'trường  học',
+    );
+    expect(storage.data.sets.first.cards.any((c) => c.term == '학생'), isTrue);
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('add-word')))
+          .onPressed,
+      isNotNull,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('single word save failure dismisses loading and allows retry', (
+    tester,
+  ) async {
+    final storage = MemoryStorage(StudyData.demo())..fail = true;
+    await phone(tester, storage);
+    await tester.tap(find.text('Tiếp tục học   →'));
+    await tester.pumpAndSettle();
+    Future<void> submit() async {
+      await tester.tap(find.byKey(const ValueKey('add-word')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('new-word-term')), '학교');
+      await tester.enterText(
+        find.byKey(const ValueKey('new-word-meaning')),
+        'trường học',
+      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Lưu từ'));
+    }
+
+    storage.saveGate = Completer<void>();
+    await submit();
+    for (var i = 0; i < 10 && storage.saveCalls == 0; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    await tester.pump();
+    expect(find.text('Đang lưu từ…'), findsOneWidget);
+    storage.saveGate!.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('Đang lưu từ…'), findsNothing);
+    expect(storage.data.sets.first.cards.any((c) => c.term == '학교'), isFalse);
+    storage.fail = false;
+    storage.saveGate = null;
+    await submit();
+    await tester.pumpAndSettle();
+    expect(
+      storage.data.sets.first.cards.where((c) => c.term == '학교'),
+      hasLength(1),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('writing checks Korean term and saves one result', (
     tester,
   ) async {
@@ -600,6 +712,19 @@ void main() {
     expect(result.cards.first.definition, 'trường học, nơi học tập');
     expect(() => parseCards('학교, trường học\nbad', []), throwsFormatException);
     expect(normalizeAnswer('학교'), normalizeAnswer('학교'));
+  });
+  test('import uses the first separator and preserves meaning spacing', () {
+    final result = parseCards(
+      '학교, trường  học, nơi học tập\r\n학생\t học  sinh\r가다  đi, đi tới',
+      [],
+    );
+    expect(result.cards.map((c) => c.term), ['학교', '학생', '가다']);
+    expect(result.cards.map((c) => c.definition), [
+      'trường  học, nơi học tập',
+      'học  sinh',
+      'đi, đi tới',
+    ]);
+    expect(parseCards('학교, nghĩa khác', result.cards).duplicates, 1);
   });
   test('quiz options are unique despite duplicate meanings', () {
     final cards = [

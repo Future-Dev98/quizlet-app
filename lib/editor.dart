@@ -128,17 +128,18 @@ ImportResult parseCards(
   final cards = <StudyCard>[];
   final keys = existing.map((c) => normalizeAnswer(c.term)).toSet();
   int duplicates = 0;
-  final lines = text.split(RegExp(r'\r?\n'));
+  final lines = text.split(RegExp(r'\r\n|[\r\n]'));
   for (var i = 0; i < lines.length; i++) {
     final line = lines[i].trim();
     if (line.isEmpty) continue;
-    final match = RegExp(r'^(.+?)(?:\t+| {2,})(.+)$').firstMatch(line);
-    final comma = line.indexOf(',');
-    final term =
-        (match?.group(1) ?? (comma < 0 ? '' : line.substring(0, comma))).trim();
-    final meaning =
-        (match?.group(2) ?? (comma < 0 ? '' : line.substring(comma + 1)))
-            .trim();
+    // Use the first separator; spacing inside the meaning belongs to it.
+    final separator = RegExp(r'\t+| {2,}|,').firstMatch(line);
+    final term = separator == null
+        ? ''
+        : line.substring(0, separator.start).trim();
+    final meaning = separator == null
+        ? ''
+        : line.substring(separator.end).trim();
     if (term.isEmpty || meaning.isEmpty) {
       throw FormatException(l10n.importLineError(i + 1));
     }

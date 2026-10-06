@@ -469,6 +469,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importWords => 'Import words';
 
   @override
+  String get savingWords => 'Saving words…';
+
+  @override
   String get editWord => 'Edit vocabulary';
 
   @override

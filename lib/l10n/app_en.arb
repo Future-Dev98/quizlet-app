@@ -146,6 +146,7 @@
   "importHint": "Each line: word + TAB / multiple spaces / comma + meaning. Duplicate words are skipped.",
   "importExample": "hello, greeting\nworld, planet",
   "importWords": "Import words",
+  "savingWords": "Saving words…",
   "editWord": "Edit vocabulary",
   "word": "Word",
   "meaning": "Meaning",
