@@ -11,9 +11,9 @@ jobs:
       - run: flutter pub get
       - run: flutter build ios --release --no-codesign
       - run: |
-          mkdir payload
-          mv build/ios/iphoneos/Runner.app payload/
-          zip -r Runner.ipa payload
+          mkdir Payload
+          mv build/ios/iphoneos/Runner.app Payload/
+          zip -r Runner.ipa Payload
       - uses: actions/upload-artifact@v4
         with:
           name: ios-app
