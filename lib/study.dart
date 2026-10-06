@@ -609,8 +609,10 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 Text(l10n.importHint),
                 const SizedBox(height: 16),
                 TextField(
+                  key: const ValueKey('import-words-input'),
                   controller: input,
                   maxLines: 8,
+                  autocorrect: false,
                   decoration: InputDecoration(
                     hintText: l10n.importExample,
                     errorText: error,
@@ -627,10 +629,13 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
             FilledButton(
               onPressed: () {
                 try {
-                  Navigator.pop(
-                    context,
-                    parseCards(input.text, set.cards, localization: l10n),
+                  final parsed = parseCards(
+                    input.text,
+                    set.cards,
+                    localization: l10n,
                   );
+                  FocusScope.of(context).unfocus();
+                  Navigator.pop(context, parsed);
                 } on FormatException catch (e) {
                   state(() => error = e.message);
                 }
@@ -654,48 +659,63 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     }
     setState(() => busy = true);
     try {
-      final missing = await lookupNewCards(
-        context,
-        newCards,
-        widget.dictionary,
-        settings['wordLanguage'] as String? ?? 'ko-KR',
-      );
-      if (!mounted) return;
       final next = StudySet.fromJson(set.toJson())..cards.addAll(newCards);
-      final navigator = Navigator.of(context, rootNavigator: true);
-      final loading = DialogRoute<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => PopScope(
-          canPop: false,
-          child: AlertDialog(
-            title: Text(context.l10n.savingWords),
-            content: const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        ),
-      );
-      unawaited(navigator.push(loading));
-      bool ok;
-      try {
-        ok = await widget.onSave(next);
-      } finally {
-        if (loading.isActive) navigator.removeRoute(loading);
-      }
-      if (ok && mounted) {
+      if (await saveWords(next) && mounted) {
         setState(() {
           set = next;
           order = set.cards.map((c) => c.id).toList();
         });
         message(l10n.importSummary(newCards.length, duplicates));
+        // The entered words are already persisted before any network request.
+        // Enrich a copy so a failed details save cannot change saved cards.
+        final enriched = StudySet.fromJson(set.toJson());
+        final ids = newCards.map((c) => c.id).toSet();
+        final added = enriched.cards.where((c) => ids.contains(c.id)).toList();
+        final missing = await lookupNewCards(
+          context,
+          added,
+          widget.dictionary,
+          settings['wordLanguage'] as String? ?? 'ko-KR',
+          wordsSaved: true,
+        );
+        if (!mounted) return;
+        if (added.any((c) => c.details != null) &&
+            await saveWords(enriched) &&
+            mounted) {
+          setState(() => set = enriched);
+        }
         if ((missing ?? 0) > 0) message(l10n.detailsMissing(missing!));
       }
     } catch (_) {
       message(l10n.saveError);
     } finally {
       if (mounted) setState(() => busy = false);
+    }
+  }
+
+  Future<bool> saveWords(StudySet next) async {
+    FocusScope.of(context).unfocus();
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final loading = DialogRoute<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: Text(context.l10n.savingWords),
+          scrollable: true,
+          content: const SizedBox(
+            height: 48,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      ),
+    );
+    unawaited(navigator.push(loading));
+    try {
+      return await widget.onSave(next);
+    } finally {
+      if (loading.isActive) navigator.removeRoute(loading);
     }
   }
 

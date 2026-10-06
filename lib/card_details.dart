@@ -9,23 +9,35 @@ Future<int?> lookupNewCards(
   BuildContext context,
   List<StudyCard> cards,
   WordDictionary dictionary,
-  String language,
-) => showDialog<int>(
-  context: context,
-  barrierDismissible: false,
-  builder: (_) =>
-      _LookupProgress(cards: cards, dictionary: dictionary, language: language),
-);
+  String language, {
+  bool wordsSaved = false,
+}) async {
+  final route = DialogRoute<int>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => _LookupProgress(
+      cards: cards,
+      dictionary: dictionary,
+      language: language,
+      wordsSaved: wordsSaved,
+    ),
+  );
+  final result = await Navigator.of(context, rootNavigator: true).push(route);
+  await route.completed;
+  return result;
+}
 
 class _LookupProgress extends StatefulWidget {
   const _LookupProgress({
     required this.cards,
     required this.dictionary,
     required this.language,
+    required this.wordsSaved,
   });
   final List<StudyCard> cards;
   final WordDictionary dictionary;
   final String language;
+  final bool wordsSaved;
   @override
   State<_LookupProgress> createState() => _LookupProgressState();
 }
@@ -63,11 +75,16 @@ class _LookupProgressState extends State<_LookupProgress> {
     canPop: false,
     child: AlertDialog(
       title: Text(context.l10n.lookingUpWords),
+      scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(context.l10n.dictionaryNetworkNotice),
+          Text(
+            widget.wordsSaved
+                ? context.l10n.wordsSavedLookupNotice
+                : context.l10n.dictionaryNetworkNotice,
+          ),
           const SizedBox(height: 20),
           LinearProgressIndicator(
             value: widget.cards.isEmpty ? 1 : done / widget.cards.length,
@@ -85,7 +102,11 @@ class _LookupProgressState extends State<_LookupProgress> {
               widget.cards.where((c) => c.details == null).length,
             );
           },
-          child: Text(context.l10n.skipLookup),
+          child: Text(
+            widget.wordsSaved
+                ? context.l10n.skipLookupOnly
+                : context.l10n.skipLookup,
+          ),
         ),
       ],
     ),

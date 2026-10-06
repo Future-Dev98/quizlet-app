@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -282,7 +283,45 @@ void main() {
     expect(storage.data.sets.single.cards.first.definition, 'trường học');
     expect(tester.takeException(), isNull);
   });
-  testWidgets('bulk import locks lookup and shows loading until saved', (
+  testWidgets(
+    'iOS bulk import with keyboard saves without waiting for network',
+    (tester) async {
+      final storage = MemoryStorage(StudyData.demo());
+      await phone(tester, storage, dictionary: DelayedDictionary());
+      await tester.tap(find.text('Tiếp tục học   →'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Nhập từ'));
+      await tester.pumpAndSettle();
+      tester.view.viewInsets = const FakeViewPadding(bottom: 336);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.enterText(
+        find.byType(TextField).last,
+        '학교, trường học\n학생, học sinh\n학교, trùng',
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final submit = find.widgetWithText(FilledButton, 'Nhập từ');
+      expect(submit.hitTestable(), findsOneWidget);
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+      expect(
+        storage.data.sets.first.cards.where((c) => c.term == '학교'),
+        hasLength(1),
+      );
+      expect(storage.data.sets.first.cards.any((c) => c.term == '학생'), isTrue);
+      expect(find.text('Đang tra cách dùng và từ đồng nghĩa'), findsOneWidget);
+      await tester.tap(find.text('Bỏ qua tra cứu'));
+      await tester.pumpAndSettle();
+      expect(
+        storage.data.sets.first.cards.where((c) => c.term == '학교'),
+        hasLength(1),
+      );
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({TargetPlatform.iOS}),
+  );
+
+  testWidgets('bulk import saves first then looks up and persists details', (
     tester,
   ) async {
     final storage = MemoryStorage(StudyData.demo());
@@ -296,19 +335,18 @@ void main() {
       find.byType(TextField).last,
       '학교, trường  học\n학생\t học sinh',
     );
+    storage.saveGate = Completer<void>();
     await tester.tap(find.widgetWithText(FilledButton, 'Nhập từ'));
-    await tester.pumpAndSettle();
+    for (var i = 0; i < 10 && storage.saveCalls == 0; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    await tester.pump();
     expect(
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('add-word')))
           .onPressed,
       isNull,
     );
-    expect(storage.saveCalls, 0);
-    storage.saveGate = Completer<void>();
-    dictionary.result.complete(null);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Đang lưu từ…'), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
     expect(storage.saveCalls, 1);
@@ -319,6 +357,7 @@ void main() {
     storage.saveGate!.complete();
     await tester.pumpAndSettle();
     expect(find.text('Đang lưu từ…'), findsNothing);
+    expect(find.text('Đang tra cách dùng và từ đồng nghĩa'), findsOneWidget);
     expect(
       storage.data.sets.first.cards
           .where((c) => c.term == '학교')
@@ -327,6 +366,28 @@ void main() {
       'trường  học',
     );
     expect(storage.data.sets.first.cards.any((c) => c.term == '학생'), isTrue);
+    expect(
+      storage.data.sets.first.cards.where((c) => c.term == '학교').single.details,
+      isNull,
+    );
+    dictionary.result.complete(
+      WordDetails(
+        language: 'ko',
+        sourceUrl: 'https://en.wiktionary.org/wiki/학교',
+        fetchedAt: '2026-10-06',
+        examples: ['학교에 가요.'],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(storage.saveCalls, 2);
+    expect(
+      storage.data.sets.first.cards
+          .where((c) => c.term == '학교')
+          .single
+          .details!
+          .examples,
+      ['학교에 가요.'],
+    );
     expect(
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('add-word')))

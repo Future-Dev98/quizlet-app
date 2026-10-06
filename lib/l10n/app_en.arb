@@ -147,6 +147,8 @@
   "importExample": "hello, greeting\nworld, planet",
   "importWords": "Import words",
   "savingWords": "Saving words…",
+  "wordsSavedLookupNotice": "Your words and meanings have been saved. Loading usage, examples and synonyms. You can skip this step.",
+  "skipLookupOnly": "Skip lookup",
   "editWord": "Edit vocabulary",
   "word": "Word",
   "meaning": "Meaning",

@@ -148,6 +148,8 @@
   "importExample": "사랑하다, yêu\n공부하다, học",
   "importWords": "Nhập từ",
   "savingWords": "Đang lưu từ…",
+  "wordsSavedLookupNotice": "Đã lưu từ và nghĩa bạn nhập. Đang tải thêm cách dùng, ví dụ và từ đồng nghĩa. Bạn có thể bỏ qua bước này.",
+  "skipLookupOnly": "Bỏ qua tra cứu",
   "editWord": "Sửa từ vựng",
   "word": "Từ",
   "meaning": "Nghĩa",

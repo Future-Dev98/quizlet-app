@@ -980,6 +980,18 @@ abstract class AppLocalizations {
   /// **'Đang lưu từ…'**
   String get savingWords;
 
+  /// No description provided for @wordsSavedLookupNotice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã lưu từ và nghĩa bạn nhập. Đang tải thêm cách dùng, ví dụ và từ đồng nghĩa. Bạn có thể bỏ qua bước này.'**
+  String get wordsSavedLookupNotice;
+
+  /// No description provided for @skipLookupOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ qua tra cứu'**
+  String get skipLookupOnly;
+
   /// No description provided for @editWord.
   ///
   /// In vi, this message translates to:

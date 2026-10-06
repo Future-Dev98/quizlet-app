@@ -471,6 +471,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get savingWords => 'Đang lưu từ…';
 
   @override
+  String get wordsSavedLookupNotice =>
+      'Đã lưu từ và nghĩa bạn nhập. Đang tải thêm cách dùng, ví dụ và từ đồng nghĩa. Bạn có thể bỏ qua bước này.';
+
+  @override
+  String get skipLookupOnly => 'Bỏ qua tra cứu';
+
+  @override
   String get editWord => 'Sửa từ vựng';
 
   @override

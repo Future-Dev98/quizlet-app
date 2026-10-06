@@ -472,6 +472,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingWords => 'Saving words…';
 
   @override
+  String get wordsSavedLookupNotice =>
+      'Your words and meanings have been saved. Loading usage, examples and synonyms. You can skip this step.';
+
+  @override
+  String get skipLookupOnly => 'Skip lookup';
+
+  @override
   String get editWord => 'Edit vocabulary';
 
   @override
