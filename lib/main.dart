@@ -170,7 +170,8 @@ class _HomePageState extends State<HomePage> {
     } else {
       next.sets[i] = result;
     }
-    await widget.update(next);
+    final saved = await widget.update(next);
+    if (saved && mounted && set == null) open(result);
   }
 
   void open(StudySet set) => Navigator.of(context).push(

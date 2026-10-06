@@ -267,8 +267,8 @@ void main() {
     await tester.tap(find.text('Lưu danh mục'));
     await tester.pumpAndSettle();
     expect(storage.data.sets.single.title, 'Bộ mới');
-    await tester.tap(find.text('Tiếp tục học   →'));
-    await tester.pumpAndSettle();
+    expect(find.widgetWithText(AppBar, 'Bộ mới'), findsOneWidget);
+    expect(find.byKey(const ValueKey('add-word')), findsOneWidget);
     await tester.ensureVisible(find.text('Nhập từ'));
     await tester.tap(find.text('Nhập từ'));
     await tester.pumpAndSettle();
