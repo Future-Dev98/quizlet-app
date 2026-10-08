@@ -98,6 +98,48 @@ abstract class AppLocalizations {
     Locale('vi'),
   ];
 
+  /// No description provided for @listenAgain.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe lại'**
+  String get listenAgain;
+
+  /// No description provided for @continueListening.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe tiếp'**
+  String get continueListening;
+
+  /// No description provided for @femaleVoice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nữ'**
+  String get femaleVoice;
+
+  /// No description provided for @maleVoice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nam'**
+  String get maleVoice;
+
+  /// No description provided for @enhancedVoice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chất lượng cao'**
+  String get enhancedVoice;
+
+  /// No description provided for @premiumVoice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cao cấp'**
+  String get premiumVoice;
+
+  /// No description provided for @downloadVoicesHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để có thêm giọng nữ tiếng Hàn và tiếng Việt, tải giọng trong Cài đặt iPhone → Trợ năng → Nội dung được đọc hoặc Đọc & nói → Giọng nói. Sau đó mở lại Tùy chọn để cập nhật danh sách.'**
+  String get downloadVoicesHint;
+
   /// No description provided for @addWord.
   ///
   /// In vi, this message translates to:

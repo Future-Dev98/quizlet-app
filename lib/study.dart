@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'models.dart';
@@ -78,13 +79,30 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed) stop();
+    if (state == AppLifecycleState.detached ||
+        (defaultTargetPlatform != TargetPlatform.iOS &&
+            state != AppLifecycleState.resumed)) {
+      stop();
+    }
   }
 
   void stop() {
     generation++;
-    tts.stop();
+    unawaited(stopSpeech(generation));
     if (mounted) setState(() => playing = false);
+  }
+
+  Future<void> stopSpeech(int token) async {
+    await tts.stop();
+    await releaseAudioSession(token);
+  }
+
+  Future<void> releaseAudioSession(int token) async {
+    if (!kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.iOS &&
+        token == generation) {
+      await tts.setSharedInstance(false);
+    }
   }
 
   @override
@@ -92,7 +110,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     searchController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     generation++;
-    tts.stop();
+    unawaited(stopSpeech(generation));
     super.dispose();
   }
 
@@ -117,11 +135,9 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
     final item = next.cards.firstWhere((v) => v.id == c.id);
     if (mastered != null) {
       item.mastered = mastered;
-      if (mastered) item.starred = false;
     }
     if (starred != null) {
       item.starred = starred;
-      if (starred) item.mastered = false;
     }
     next.lastCardId = c.id;
     if (await save(next) && mounted) {
@@ -156,8 +172,17 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
 
   Future<void> speak(String text, bool meaning) async {
     if (settings['speechEnabled'] == false) return;
+    final token = generation;
     try {
       await tts.stop();
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+        // Keep the session active between words in a background study session.
+        await tts.setIosAudioCategory(IosTextToSpeechAudioCategory.playback, [
+          IosTextToSpeechAudioCategoryOptions.duckOthers,
+        ], IosTextToSpeechAudioMode.spokenAudio);
+        await tts.autoStopSharedSession(!playing);
+        await tts.setSharedInstance(true);
+      }
       final language =
           settings[meaning ? 'meaningLanguage' : 'wordLanguage'] as String? ??
           (meaning ? 'vi-VN' : 'ko-KR');
@@ -171,8 +196,11 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
           voice['locale'].toString().split('-').first ==
               language.split('-').first) {
         await tts.setVoice(Map<String, String>.from(voice));
+      } else {
+        await tts.clearVoice();
       }
       await tts.setSpeechRate((settings['rate'] as num? ?? .45).toDouble());
+      if (!mounted || token != generation) return;
       await tts.speak(text);
     } catch (_) {
       message(l10n.speechError);
@@ -242,35 +270,98 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
         }
       }
     } finally {
-      if (mounted && token == generation) setState(() => playing = false);
+      if (mounted && token == generation) {
+        setState(() => playing = false);
+        await releaseAudioSession(token);
+      }
     }
   }
 
   Future<void> options() async {
     stop();
     var next = Map<String, dynamic>.of(settings);
-    final timingForm = GlobalKey<FormState>();
+    Timer? saveTimer;
+    Future<void> writes = Future.value();
+    var revision = 0;
+    var savedRevision = 0;
+    var sheetOpen = true;
+    var timingForm = GlobalKey<FormState>();
+    StateSetter? refreshSheet;
+    Future<void> persist() {
+      saveTimer?.cancel();
+      if (savedRevision == revision) return writes;
+      final token = revision;
+      savedRevision = token;
+      final snapshot = Map<String, dynamic>.of(next);
+      writes = writes.then((_) async {
+        final ok = await widget.onSettings(snapshot);
+        if (!mounted) return;
+        if (ok) {
+          setState(() {
+            settings = snapshot;
+            index = index.clamp(0, cards.isEmpty ? 0 : cards.length - 1);
+            flipped = false;
+          });
+        } else if (token == revision) {
+          next = Map<String, dynamic>.of(settings);
+          timingForm = GlobalKey<FormState>();
+          if (sheetOpen) refreshSheet?.call(() {});
+        }
+      });
+      return writes;
+    }
+
+    void scheduleSave() {
+      revision++;
+      saveTimer?.cancel();
+      saveTimer = Timer(const Duration(milliseconds: 250), persist);
+    }
+
     List<Map<String, String>> voices = [];
     try {
       voices = (await tts.getVoices as List)
-          .map((v) => {'name': '${v['name']}', 'locale': '${v['locale']}'})
-          .toSet()
+          .whereType<Map>()
+          .where((v) => v['name'] is String && v['locale'] is String)
+          .map(
+            (v) => {
+              for (final key in [
+                'name',
+                'locale',
+                'identifier',
+                'gender',
+                'quality',
+              ])
+                if (v[key] != null) key: '${v[key]}',
+            },
+          )
           .toList();
+      voices.sort((a, b) {
+        final femaleA = a['gender']?.toLowerCase() == 'female';
+        final femaleB = b['gender']?.toLowerCase() == 'female';
+        if (femaleA != femaleB) return femaleA ? -1 : 1;
+        return a['name']!.compareTo(b['name']!);
+      });
     } catch (_) {
       /* Voice selection is optional. */
     }
     if (!mounted) return;
-    final result = await showModalBottomSheet<Map<String, dynamic>>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (context) => StatefulBuilder(
         builder: (context, state) {
+          refreshSheet = state;
+          void change(VoidCallback update) {
+            state(update);
+            scheduleSave();
+          }
+
           Widget toggle(String key, String label, bool fallback) =>
               SwitchListTile(
                 title: Text(label),
                 value: next[key] as bool? ?? fallback,
-                onChanged: (v) => state(() => next[key] = v),
+                onChanged: (v) => change(() => next[key] = v),
               );
           Widget number(
             String key,
@@ -284,19 +375,40 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
               items: values
                   .map((v) => DropdownMenuItem(value: v, child: Text('$v')))
                   .toList(),
-              onChanged: (v) => state(() => next[key] = v),
+              onChanged: (v) => change(() => next[key] = v),
             ),
           );
           Widget voice(String key, String locale, String label) {
+            String identity(Map v) =>
+                v['identifier']?.toString().isNotEmpty == true
+                ? v['identifier'].toString()
+                : '${v['name']}|${v['locale']}';
             final choices = {
               for (final v in voices.where(
-                (v) => v['locale']!.startsWith(locale),
+                (v) =>
+                    v['locale']!.replaceAll('_', '-').split('-').first ==
+                    locale,
               ))
-                '${v['name']}|${v['locale']}': v,
+                identity(v): v,
             };
-            final value = next[key] is Map
-                ? '${next[key]['name']}|${next[key]['locale']}'
-                : '';
+            var value = next[key] is Map ? identity(next[key]) : '';
+            // Preserve selections saved before voice identifiers were stored.
+            if (!choices.containsKey(value) && next[key] is Map) {
+              for (final entry in choices.entries) {
+                if (entry.value['name'] == next[key]['name'] &&
+                    entry.value['locale'] == next[key]['locale']) {
+                  value = entry.key;
+                  break;
+                }
+              }
+            }
+            String voiceLabel(Map<String, String> v) => [
+              v['name']!,
+              if (v['gender']?.toLowerCase() == 'female') l10n.femaleVoice,
+              if (v['gender']?.toLowerCase() == 'male') l10n.maleVoice,
+              if (v['quality']?.toLowerCase() == 'enhanced') l10n.enhancedVoice,
+              if (v['quality']?.toLowerCase() == 'premium') l10n.premiumVoice,
+            ].join(' · ');
             return DropdownButtonFormField<String>(
               key: ValueKey('$key-$locale'),
               isExpanded: true,
@@ -308,13 +420,13 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   (e) => DropdownMenuItem(
                     value: e.key,
                     child: Text(
-                      e.value['name']!,
+                      voiceLabel(e.value),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
               ],
-              onChanged: (v) => state(() => next[key] = choices[v]),
+              onChanged: (v) => change(() => next[key] = choices[v]),
             );
           }
 
@@ -335,7 +447,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                   ),
                 )
                 .toList(),
-            onChanged: (value) => state(() {
+            onChanged: (value) => change(() {
               next[key] = value;
               next.remove(voiceKey);
             }),
@@ -349,6 +461,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: InputDecoration(
                 labelText: label,
                 suffixText: l10n.secondsUnit,
@@ -366,9 +479,19 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 }
                 return null;
               },
-              onSaved: (value) => next[key] =
-                  (double.parse(value!.trim().replaceAll(',', '.')) * 1000)
-                      .round(),
+              onChanged: (value) {
+                final seconds = double.tryParse(
+                  value.trim().replaceAll(',', '.'),
+                );
+                if (seconds == null ||
+                    !seconds.isFinite ||
+                    seconds < .001 ||
+                    seconds > 60) {
+                  return;
+                }
+                next[key] = (seconds * 1000).round();
+                scheduleSave();
+              },
             ),
           );
 
@@ -406,7 +529,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                       max: 1,
                       divisions: 18,
                       label: '${next['rate'] ?? .45}',
-                      onChanged: (v) => state(() => next['rate'] = v),
+                      onChanged: (v) => change(() => next['rate'] = v),
                     ),
                     delay('flipDelayMs', l10n.flipDelay, 3000),
                     delay('nextDelayMs', l10n.nextDelay, 2000),
@@ -455,6 +578,11 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                     ),
                     const SizedBox(height: 8),
                     Text(l10n.languageHint),
+                    if (!kIsWeb &&
+                        defaultTargetPlatform == TargetPlatform.iOS) ...[
+                      const SizedBox(height: 8),
+                      Text(l10n.downloadVoicesHint),
+                    ],
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       initialValue: next['font'] as String? ?? 'system',
@@ -470,17 +598,9 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                           child: Text('Monospace'),
                         ),
                       ],
-                      onChanged: (v) => state(() => next['font'] = v),
+                      onChanged: (v) => change(() => next['font'] = v),
                     ),
                     const SizedBox(height: 24),
-                    FilledButton(
-                      onPressed: () {
-                        if (!timingForm.currentState!.validate()) return;
-                        timingForm.currentState!.save();
-                        Navigator.pop(context, next);
-                      },
-                      child: Text(l10n.saveOptions),
-                    ),
                   ],
                 ),
               ),
@@ -489,13 +609,8 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
         },
       ),
     );
-    if (result != null && await widget.onSettings(result) && mounted) {
-      setState(() {
-        settings = result;
-        index = 0;
-        flipped = false;
-      });
-    }
+    sheetOpen = false;
+    await persist();
   }
 
   Future<void> editSet() async {
@@ -720,17 +835,20 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
   }
 
   Future<void> toggleWordStatus(StudyCard card, {required bool learned}) async {
+    if (busy) return;
     stop();
+    final previous = set;
     final next = StudySet.fromJson(set.toJson());
     final item = next.cards.firstWhere((c) => c.id == card.id);
     if (learned) {
       item.mastered = !item.mastered;
-      if (item.mastered) item.starred = false;
     } else {
       item.starred = !item.starred;
-      if (item.starred) item.mastered = false;
     }
-    await save(next);
+    setState(() => set = next);
+    if (!await save(next) && mounted) {
+      setState(() => set = previous);
+    }
   }
 
   Future<void> deleteCard(StudyCard card) async {
@@ -996,8 +1114,13 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                     icon: const Icon(Icons.chevron_left),
                   ),
                   IconButton.filledTonal(
+                    tooltip: l10n.nextCard,
+                    onPressed: busy ? null : () => move(1),
+                    icon: const Icon(Icons.chevron_right),
+                  ),
+                  IconButton.filledTonal(
                     tooltip: playing ? l10n.stopAutoplay : l10n.autoplay,
-                    onPressed: autoplay,
+                    onPressed: busy && !playing ? null : autoplay,
                     icon: Icon(playing ? Icons.pause : Icons.play_arrow),
                   ),
                   IconButton.filledTonal(
@@ -1011,11 +1134,6 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                       });
                     },
                     icon: const Icon(Icons.shuffle),
-                  ),
-                  IconButton.filledTonal(
-                    tooltip: l10n.nextCard,
-                    onPressed: busy ? null : () => move(1),
-                    icon: const Icon(Icons.chevron_right),
                   ),
                 ],
               ),
@@ -1213,7 +1331,7 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                     key: ValueKey(c.id),
                     card: c,
                     index: i,
-                    canReorder: search.isEmpty && !busy,
+                    canReorder: search.isEmpty,
                     busy: busy,
                     onDetails: () => showDetails(c),
                     onListen: () {
@@ -1362,12 +1480,15 @@ class _SetPageState extends State<SetPage> with WidgetsBindingObserver {
                 const SizedBox(height: 25),
                 IconButton(
                   tooltip: l10n.listenSample,
-                  onPressed: () {
-                    stop();
-                    speak(meaning ? c.definition : c.term, meaning);
-                  },
+                  onPressed: busy
+                      ? null
+                      : () {
+                          stop();
+                          speak(meaning ? c.definition : c.term, meaning);
+                        },
                   icon: Icon(Icons.volume_up_outlined, color: colors.primary),
                 ),
+                const SizedBox(height: 8),
                 Text(
                   l10n.cardGestureHint,
                   style: TextStyle(

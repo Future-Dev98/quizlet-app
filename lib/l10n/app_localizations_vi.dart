@@ -10,6 +10,28 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
+  String get listenAgain => 'Nghe lại';
+
+  @override
+  String get continueListening => 'Nghe tiếp';
+
+  @override
+  String get femaleVoice => 'Nữ';
+
+  @override
+  String get maleVoice => 'Nam';
+
+  @override
+  String get enhancedVoice => 'Chất lượng cao';
+
+  @override
+  String get premiumVoice => 'Cao cấp';
+
+  @override
+  String get downloadVoicesHint =>
+      'Để có thêm giọng nữ tiếng Hàn và tiếng Việt, tải giọng trong Cài đặt iPhone → Trợ năng → Nội dung được đọc hoặc Đọc & nói → Giọng nói. Sau đó mở lại Tùy chọn để cập nhật danh sách.';
+
+  @override
   String get addWord => 'Thêm từ';
 
   @override

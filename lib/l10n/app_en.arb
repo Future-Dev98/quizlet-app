@@ -1,5 +1,12 @@
 {
   "@@locale": "en",
+  "listenAgain": "Listen again",
+  "continueListening": "Keep listening",
+  "femaleVoice": "Female",
+  "maleVoice": "Male",
+  "enhancedVoice": "Enhanced",
+  "premiumVoice": "Premium",
+  "downloadVoicesHint": "For more Korean and Vietnamese female voices, download voices in iPhone Settings → Accessibility → Spoken Content or Read & Speak → Voices. Then reopen Options to refresh the list.",
   "addWord": "Add word",
   "saveWord": "Save word",
   "autoDetailsHint": "Usage, examples and synonyms will be looked up automatically when you save.",

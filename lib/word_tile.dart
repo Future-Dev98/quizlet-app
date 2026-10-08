@@ -56,6 +56,7 @@ class WordTile extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 6, right: 8),
                           child: ReorderableDragStartListener(
                             index: index,
+                            enabled: !busy,
                             child: Semantics(
                               label: l.reorderWord,
                               child: Icon(
@@ -176,7 +177,12 @@ class WordTile extends StatelessWidget {
                             size: 16,
                           ),
                           visualDensity: VisualDensity.compact,
-                          onSelected: busy ? null : (_) => onLearned(),
+                          chipAnimationStyle: ChipAnimationStyle(
+                            selectAnimation: AnimationStyle(
+                              duration: Duration(milliseconds: 180),
+                            ),
+                          ),
+                          onSelected: (_) => onLearned(),
                         ),
                         FilterChip(
                           label: Text(l.needsReview),
@@ -193,7 +199,12 @@ class WordTile extends StatelessWidget {
                           ),
                           selectedColor: colors.tertiaryContainer,
                           visualDensity: VisualDensity.compact,
-                          onSelected: busy ? null : (_) => onReview(),
+                          chipAnimationStyle: ChipAnimationStyle(
+                            selectAnimation: AnimationStyle(
+                              duration: Duration(milliseconds: 180),
+                            ),
+                          ),
+                          onSelected: (_) => onReview(),
                         ),
                       ],
                     ),

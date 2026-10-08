@@ -10,6 +10,28 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get listenAgain => 'Listen again';
+
+  @override
+  String get continueListening => 'Keep listening';
+
+  @override
+  String get femaleVoice => 'Female';
+
+  @override
+  String get maleVoice => 'Male';
+
+  @override
+  String get enhancedVoice => 'Enhanced';
+
+  @override
+  String get premiumVoice => 'Premium';
+
+  @override
+  String get downloadVoicesHint =>
+      'For more Korean and Vietnamese female voices, download voices in iPhone Settings → Accessibility → Spoken Content or Read & Speak → Voices. Then reopen Options to refresh the list.';
+
+  @override
   String get addWord => 'Add word';
 
   @override

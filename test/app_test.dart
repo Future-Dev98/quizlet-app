@@ -216,7 +216,25 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(storage.data.sets.single.cards.first.mastered, isTrue);
+    expect(storage.data.sets.single.cards.first.starred, isTrue);
+    await tester.tap(
+      find.descendant(
+        of: tile,
+        matching: find.widgetWithText(FilterChip, 'Đã thuộc'),
+      ),
+    );
+    await tester.pumpAndSettle();
     expect(storage.data.sets.single.cards.first.mastered, isFalse);
+    expect(storage.data.sets.single.cards.first.starred, isTrue);
+    await tester.tap(
+      find.descendant(
+        of: tile,
+        matching: find.widgetWithText(FilterChip, 'Đã thuộc'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(storage.data.sets.single.cards.first.mastered, isTrue);
     expect(storage.data.sets.single.cards.first.starred, isTrue);
     await tester.tap(
       find.descendant(of: tile, matching: find.byTooltip('Thao tác với từ')),
@@ -568,6 +586,176 @@ void main() {
       await tester.pumpAndSettle();
     }
   });
+  testWidgets('word status responds before disk save without shifting chips', (
+    tester,
+  ) async {
+    final storage = MemoryStorage(StudyData.demo());
+    await phone(tester, storage);
+    await tester.tap(find.text('Tiếp tục học   →'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('vocabulary-header')),
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    final tile = find.byType(WordTile).first;
+    final chip = find.descendant(
+      of: tile,
+      matching: find.widgetWithText(FilterChip, 'Đã thuộc'),
+    );
+    await tester.ensureVisible(chip);
+    await tester.pumpAndSettle();
+    final position = tester.getTopLeft(chip);
+    storage.saveGate = Completer<void>();
+    storage.fail = true;
+    await tester.tap(chip);
+    await tester.pump(const Duration(milliseconds: 90));
+    expect(tester.widget<FilterChip>(chip).selected, isTrue);
+    expect(tester.getTopLeft(chip), position);
+    expect(
+      find.descendant(
+        of: tile,
+        matching: find.byType(ReorderableDragStartListener),
+      ),
+      findsOneWidget,
+    );
+    storage.saveGate!.complete();
+    await tester.pumpAndSettle();
+    expect(tester.widget<FilterChip>(chip).selected, isFalse);
+    expect(storage.data.sets.first.cards.first.mastered, isFalse);
+    expect(tester.getTopLeft(chip), position);
+  });
+
+  testWidgets('settings serialize changes and flush when sheet closes', (
+    tester,
+  ) async {
+    final storage = MemoryStorage(StudyData.demo());
+    await phone(tester, storage);
+    await tester.tap(find.text('Tiếp tục học   →'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Tùy chọn'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lưu tùy chọn'), findsNothing);
+    storage.saveGate = Completer<void>();
+    await tester.tap(
+      find.widgetWithText(SwitchListTile, 'Chỉ thẻ cần học lại'),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(
+      find.widgetWithText(SwitchListTile, 'Hiển thị nghĩa ở mặt trước'),
+    );
+    tester.state<NavigatorState>(find.byType(Navigator).first).pop();
+    await tester.pump();
+    storage.saveGate!.complete();
+    await tester.pumpAndSettle();
+    expect(storage.data.settings['starredOnly'], isTrue);
+    expect(storage.data.settings['reverse'], isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'invalid delay is not saved and failed autosave restores controls',
+    (tester) async {
+      final storage = MemoryStorage(StudyData.demo());
+      await phone(tester, storage);
+      await tester.tap(find.text('Tiếp tục học   →'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Tùy chọn'));
+      await tester.pumpAndSettle();
+      final delay = find.byKey(const ValueKey('flipDelayMs'));
+      await tester.ensureVisible(delay);
+      await tester.enterText(delay, '0');
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(storage.data.settings.containsKey('flipDelayMs'), isFalse);
+      await tester.enterText(delay, '0,5');
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(storage.data.settings['flipDelayMs'], 500);
+      storage.fail = true;
+      await tester.enterText(delay, '1');
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump();
+      expect(storage.data.settings['flipDelayMs'], 500);
+      expect(tester.widget<TextFormField>(delay).initialValue, '0.5');
+      tester.state<NavigatorState>(find.byType(Navigator).first).pop();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  for (final platform in [TargetPlatform.iOS, TargetPlatform.android]) {
+    testWidgets('autoplay background lifecycle on $platform', (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final calls = <MethodCall>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('flutter_tts'),
+        (call) async {
+          calls.add(call);
+          if (call.method == 'isLanguageAvailable') return true;
+          return 1;
+        },
+      );
+      final data = StudyData.demo()
+        ..settings = {'flipDelayMs': 500, 'nextDelayMs': 500};
+      await phone(tester, MemoryStorage(data));
+      await tester.tap(find.text('Tiếp tục học   →'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byTooltip('Tự động phát'));
+      await tester.tap(find.byTooltip('Tự động phát'));
+      await tester.pump();
+      final spoken = calls.where((c) => c.method == 'speak').length;
+      expect(spoken, greaterThan(0));
+      calls.clear();
+      for (final state in [
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(state);
+        await tester.pump();
+      }
+      if (platform == TargetPlatform.iOS) {
+        expect(calls.where((c) => c.method == 'stop'), isEmpty);
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(calls.where((c) => c.method == 'speak'), isNotEmpty);
+        expect(
+          calls
+              .singleWhere((c) => c.method == 'autoStopSharedSession')
+              .arguments,
+          false,
+        );
+        expect(
+          calls.singleWhere((c) => c.method == 'setSharedInstance').arguments,
+          true,
+        );
+      } else {
+        expect(calls.where((c) => c.method == 'stop'), isNotEmpty);
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(calls.where((c) => c.method == 'speak'), isEmpty);
+      }
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      if (platform == TargetPlatform.iOS) {
+        await tester.tap(find.byTooltip('Dừng tự phát'));
+        await tester.pump();
+        expect(
+          calls.where((c) => c.method == 'setSharedInstance').last.arguments,
+          false,
+        );
+      }
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Tự động phát'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+
   testWidgets('fractional delay saves milliseconds and autoplay uses 500 ms', (
     tester,
   ) async {
@@ -584,12 +772,11 @@ void main() {
     await tester.enterText(flip, '0.5');
     await tester.ensureVisible(next);
     await tester.enterText(next, '0,5');
-    await tester.ensureVisible(find.text('Lưu tùy chọn'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Lưu tùy chọn'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(storage.data.settings['flipDelayMs'], 500);
     expect(storage.data.settings['nextDelayMs'], 500);
+    tester.state<NavigatorState>(find.byType(Navigator).first).pop();
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.byTooltip('Tự động phát'));
     await tester.tap(find.byTooltip('Tự động phát'));
     tester

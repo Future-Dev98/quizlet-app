@@ -59,7 +59,9 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) {
       if (recording) finish();
-      player.stop();
+      if (!Platform.isIOS || state == AppLifecycleState.detached) {
+        player.stop();
+      }
     }
   }
 
@@ -290,6 +292,13 @@ class _ReadingPageState extends State<ReadingPage> with WidgetsBindingObserver {
         await player.stop();
         if (mounted) setState(() => playingPath = null);
       } else {
+        if (Platform.isIOS) {
+          await player.setAudioContext(
+            AudioContext(
+              iOS: AudioContextIOS(category: AVAudioSessionCategory.playback),
+            ),
+          );
+        }
         await player.play(DeviceFileSource(path));
         if (mounted) setState(() => playingPath = path);
       }

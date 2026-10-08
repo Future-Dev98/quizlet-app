@@ -146,12 +146,12 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Tiếng Anh').last);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Lưu tùy chọn'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Lưu tùy chọn'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(storage.data.settings['wordLanguage'], 'en-US');
     expect(storage.data.settings.containsKey('koVoice'), isFalse);
+    expect(find.text('Lưu tùy chọn'), findsNothing);
+    tester.state<NavigatorState>(find.byType(Navigator).first).pop();
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.byTooltip('Nghe mẫu'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Nghe mẫu'));
@@ -161,6 +161,117 @@ void main() {
       'en-US',
     );
     expect(calls.where((c) => c.method == 'speak'), isNotEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('female voice variants remain separate and save identifiers', (
+    tester,
+  ) async {
+    tester.binding.platformDispatcher.localesTestValue = const [Locale('vi')];
+    addTearDown(tester.binding.platformDispatcher.clearLocalesTestValue);
+    final calls = <MethodCall>[];
+    final voices = [
+      {
+        'name': 'Korean male',
+        'locale': 'ko-KR',
+        'gender': 'male',
+        'identifier': 'ko-male',
+      },
+      {
+        'name': 'Korean female',
+        'locale': 'ko-KR',
+        'gender': 'female',
+        'quality': 'default',
+        'identifier': 'ko-default',
+      },
+      {
+        'name': 'Korean female',
+        'locale': 'ko-KR',
+        'gender': 'female',
+        'quality': 'enhanced',
+        'identifier': 'ko-enhanced',
+      },
+      {
+        'name': 'Vietnamese female',
+        'locale': 'vi-VN',
+        'gender': 'female',
+        'quality': 'default',
+        'identifier': 'vi-default',
+      },
+      {
+        'name': 'Vietnamese female',
+        'locale': 'vi-VN',
+        'gender': 'female',
+        'quality': 'premium',
+        'identifier': 'vi-premium',
+      },
+    ];
+    const channel = MethodChannel('flutter_tts');
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+      call,
+    ) async {
+      calls.add(call);
+      if (call.method == 'getVoices') return voices;
+      if (call.method == 'isLanguageAvailable') return true;
+      return 1;
+    });
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        null,
+      ),
+    );
+    final storage = MemoryStorage(StudyData.demo());
+    await tester.pumpWidget(MyApp(storage: storage));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tiếp tục học   →'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Tùy chọn'));
+    await tester.pumpAndSettle();
+    for (final language in ['ko', 'vi']) {
+      final key = language == 'ko' ? 'koVoice' : 'viVoice';
+      final picker = find.byKey(ValueKey('$key-$language'));
+      await tester.scrollUntilVisible(
+        picker,
+        250,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
+      final dropdown = tester.widget<DropdownButton<String>>(
+        find.descendant(
+          of: picker,
+          matching: find.byType(DropdownButton<String>),
+        ),
+      );
+      expect(dropdown.items!.length, language == 'ko' ? 4 : 3);
+      expect((dropdown.items![1].child as Text).data, contains('Nữ'));
+      await tester.tap(picker);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find
+            .text(
+              language == 'ko'
+                  ? 'Korean female · Nữ · Chất lượng cao'
+                  : 'Vietnamese female · Nữ · Cao cấp',
+            )
+            .last,
+      );
+      await tester.pumpAndSettle();
+    }
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(storage.data.settings['koVoice']['identifier'], 'ko-enhanced');
+    expect(storage.data.settings['viVoice']['identifier'], 'vi-premium');
+    tester.state<NavigatorState>(find.byType(Navigator).first).pop();
+    await tester.pumpAndSettle();
+    final restored = StudyData.decode(storage.data.encode());
+    expect(restored.settings['koVoice']['identifier'], 'ko-enhanced');
+    await tester.ensureVisible(find.byTooltip('Nghe mẫu'));
+    await tester.tap(find.byTooltip('Nghe mẫu'));
+    await tester.pumpAndSettle();
+    expect(
+      calls.where((c) => c.method == 'setVoice').last.arguments['identifier'],
+      'ko-enhanced',
+    );
     expect(tester.takeException(), isNull);
   });
 

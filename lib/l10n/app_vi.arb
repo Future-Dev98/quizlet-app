@@ -1,5 +1,12 @@
 {
   "@@locale": "vi",
+  "listenAgain": "Nghe lại",
+  "continueListening": "Nghe tiếp",
+  "femaleVoice": "Nữ",
+  "maleVoice": "Nam",
+  "enhancedVoice": "Chất lượng cao",
+  "premiumVoice": "Cao cấp",
+  "downloadVoicesHint": "Để có thêm giọng nữ tiếng Hàn và tiếng Việt, tải giọng trong Cài đặt iPhone → Trợ năng → Nội dung được đọc hoặc Đọc & nói → Giọng nói. Sau đó mở lại Tùy chọn để cập nhật danh sách.",
   "addWord": "Thêm từ",
   "saveWord": "Lưu từ",
   "autoDetailsHint": "Cách dùng, ví dụ và từ đồng nghĩa sẽ được tra tự động khi lưu.",
